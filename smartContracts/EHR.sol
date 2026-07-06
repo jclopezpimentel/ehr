@@ -2,6 +2,10 @@
 pragma solidity 0.8.23;
 
 import "./BirthCertificate.sol";
+//importing the interface
+//import "./OwnerInterface.sol";
+//import "./UsersInterface.sol";
+
 
 contract EHR{  
     //attributes
@@ -10,8 +14,7 @@ contract EHR{
    address public government; 
    address public owner;
     string public nameToken="EHR";
-  BirthCertificate private birthCer;
-    uint private idAch;
+  address private birthCer;
    address private cUsers;
    
   event governmentTransactions(
@@ -29,7 +32,7 @@ contract EHR{
     mapping(uint => HealthRecord) private healthRecords;
     uint private idAch=0;
 
-  constructor(address birthC, address _contractUsers, address _owner) { //check if instead of to pass owner, pass digitalIdentity address
+  constructor(address birthC, address _contractUsers, address _owner) {
     //BirthCertificate birthCer = BirthCertificate(birthC);     
     birthCer = birthC;
     dateCreation = block.timestamp;    
@@ -45,6 +48,7 @@ contract EHR{
   }
 
     modifier mustBeHealthCP(){ // must be healthCare Professional  
+      UsersInterface contractUsers = UsersInterface(cUsers);
       require(contractUsers.getType(msg.sender)==10,"Incorrect HealthCare Professional user");   
       //require(msg.sender==government,"Executor must be the University");
       _;
@@ -52,7 +56,7 @@ contract EHR{
 
     function addHealthRecord(string memory id, string memory title, string memory date, string memory hashDetails) 
      public mustBeHealthCP {
-        healthRecords[idAch] = Achievement(id,title,date,hashDetails);
+        healthRecords[idAch] = HealthRecord(id,title,date,hashDetails);
         idAch++;
     }
 
