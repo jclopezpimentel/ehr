@@ -2,6 +2,7 @@
 pragma solidity 0.8.23;
 
 import "./BirthCertificate.sol";
+import "./CURPS.sol";
 //importing the interface
 //import "./OwnerInterface.sol";
 //import "./UsersInterface.sol";
@@ -14,8 +15,8 @@ contract EHR{
    address public government; 
    address public owner;
     string public nameToken="EHR";
-  address private birthCer;
    address private cUsers;
+   string private curp;
    
   event governmentTransactions(
       address indexed executor,
@@ -32,19 +33,19 @@ contract EHR{
     mapping(uint => HealthRecord) private healthRecords;
     uint private idAch=0;
 
-  constructor(address birthC, address _contractUsers, address _owner) {
+  constructor(address _contractUsers, address _owner, string memory _curp, address _contractCURP) {
     //BirthCertificate birthCer = BirthCertificate(birthC);     
-    birthCer = birthC;
+    //birthCer = birthC;
     dateCreation = block.timestamp;    
     cUsers = _contractUsers;
+    curp = _curp;
     UsersInterface contractUsers = UsersInterface(cUsers);    
-    require(contractUsers.getCreator(_owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
-
+    CURPS curpF  = CURPS(_contractCURP);    
+    require(curpF.getOwner(_curp)!=address(0),"User already exists");
     government = msg.sender;
     owner = _owner;
     emit governmentTransactions(msg.sender,dateCreation);
-
   }
 
     modifier mustBeHealthCP(){ // must be healthCare Professional  
