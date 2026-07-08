@@ -2,6 +2,7 @@
 pragma solidity 0.8.23;
 
 import "./BirthCertificate.sol";
+//import "./DigitalIdentity.sol";
 
 contract CURPS is OwnerInterface{  
     //attributes
@@ -13,9 +14,7 @@ contract CURPS is OwnerInterface{
    address private cUsers;
 
     struct CURP_MATCH{
-        address digitalIdentity;
         address birthCer; 
-        address owner;
     }
     //We set the curp and it returns the digitalId and birthCer addresses.        
     mapping(string => CURP_MATCH) private curpMatches;
@@ -40,24 +39,18 @@ contract CURPS is OwnerInterface{
 
     modifier ownerOrGovernment(string memory _curp){      
       UsersInterface contractUsers = UsersInterface(cUsers);
-      require((msg.sender==curpMatches[_curp].owner) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
+      
+      BirthCertificate bc = BirthCertificate(curpMatches[_curp].birthCer);
+      require((msg.sender==bc.owner()) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
       _;
     }
 
-    function addCURP(string memory _curp, address _digIden, address _birthCer, address _owner) 
+    function addCURP(string memory _curp, address _birthCer) 
      public mustBeGovernment {
-        curpMatches[_curp] = CURP_MATCH(_digIden,_birthCer,_owner);
-    }
-
-    function getDigitalIdentity(string memory curp) public view ownerOrGovernment(curp) returns (address) {
-      return curpMatches[curp].digitalIdentity; //if it does not exist returns address(0)
+        curpMatches[_curp] = CURP_MATCH(_birthCer);
     }
 
     function getBirthCertificate(string memory curp) public view ownerOrGovernment(curp) returns (address) {
       return curpMatches[curp].birthCer; //if it does not exist returns address(0)
-    }
-
-    function getOwner(string memory curp) public view ownerOrGovernment(curp) returns (address) {
-      return curpMatches[curp].owner; //if it does not exist returns address(0)
     }
 }

@@ -4,6 +4,7 @@ pragma solidity 0.8.23;
 //importing the interface
 import "./OwnerInterface.sol";
 import "./UsersInterface.sol";
+import "./DigitalIdentity.sol";
 
 contract BirthCertificate is OwnerInterface{  
     //attributes
@@ -23,7 +24,7 @@ contract BirthCertificate is OwnerInterface{
    address public government;
    address public owner;
     string public nameToken="BirthCertificate";
-    
+    address public digitalIdentity; // This is the digital identity of the user
    address private cUsers;
    
   event governmentTransactions(
@@ -32,11 +33,13 @@ contract BirthCertificate is OwnerInterface{
   );
 
   constructor(string memory _name, string memory _fLastName, string memory _mLastName, bool _gender, 
-              uint16 _day, uint16 _month, uint16 _year, string memory _state, string memory _municipality, 
-              address _contractUsers, address _owner) {
+              uint16 _day, uint16 _month, uint16 _year, string memory _state, string memory _municipality,
+              address _contractUsers, address _digIden) {
+    DigitalIdentity dIdentity = DigitalIdentity(_digIden);
+    owner = dIdentity.owner();
     cUsers = _contractUsers;
     UsersInterface contractUsers = UsersInterface(cUsers);    
-    require(contractUsers.getCreator(_owner)!=address(0),"User already exists");
+    require(contractUsers.getCreator(owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
 
     name = _name; 
@@ -53,7 +56,7 @@ contract BirthCertificate is OwnerInterface{
     tokenFather=address(0);
     tokenMother=address(0);
     government = msg.sender;
-    owner = _owner;
+    
     emit governmentTransactions(msg.sender,dateCreation);
   }
 
