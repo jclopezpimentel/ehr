@@ -16,7 +16,7 @@ contract DigitalIdentity is OwnerInterface{
         address public owner;
          string public nameToken="DigitalIdentity";
         address public government;
-        address private contractAddOfUsers;
+        address public contractAddOfUsers;
 
         struct LinkedToken{
                 address tokenAdd; //token to be added

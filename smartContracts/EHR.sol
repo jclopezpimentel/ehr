@@ -1,24 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-import "./BirthCertificate.sol";
-import "./CURPS.sol";
-//importing the interface
 //import "./OwnerInterface.sol";
-//import "./UsersInterface.sol";
+import "./DigitalIdentity.sol";
 
-
-contract EHR{  
+contract EHR is OwnerInterface{  
     //attributes
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
-   address public government; 
    address public owner;
     string public nameToken="EHR";
-   address private cUsers;
+    address public government; //healthcare professional who created the EHR
+    address private healthCP; //healthcare professional who created the EHR
+    address private cUsers;
    string private curp;
    
-  event governmentTransactions(
+  event healthCPTransactions(
       address indexed executor,
          uint dateCreation
   );
@@ -34,27 +31,21 @@ contract EHR{
     mapping(uint => HealthRecord) private healthRecords;
     uint private idAch=0;
 
-  constructor(address _contractUsers, address _owner, string memory _curp, address _contractCURP) {
-    CURPS curpF  = CURPS(_contractCURP); 
-    //address birthC = curpF.getBirthCertificate(_curp);
-    BirthCertificate birthCer = BirthCertificate(curpF.getBirthCertificate(_curp));     
-    //birthCer = birthC;
-    //Parameter _owner is introuced to verify if it corresponds to the previous introduced _curp
-    require(_owner==birthCer.owner(),"Onwer or curp is incorrect");
-    owner = _owner;
-    UsersInterface contractUsers = UsersInterface(_contractUsers);    
-    require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
-    government = msg.sender;
-    cUsers = _contractUsers;
-    require(birthCer.owner()!=address(0),"User already exists");
+  constructor(address _digIdentity, string memory _curp, address _contractGralEHR, address _healthCP){    
+    require(msg.sender==_contractGralEHR,"Error: incorrect sender");
+    DigitalIdentity digIdentity = DigitalIdentity(_digIdentity);
+    cUsers = digIdentity.contractAddOfUsers();
+    owner = digIdentity.owner();
+    government = _healthCP;
+    healthCP = _healthCP;
     curp = _curp;
     dateCreation = block.timestamp;       
-    emit governmentTransactions(msg.sender,dateCreation);
+    emit healthCPTransactions(msg.sender,dateCreation);
   }
 
     modifier mustBeHealthCP(){ // must be healthCare Professional  
       UsersInterface contractUsers = UsersInterface(cUsers);
-      require(contractUsers.getType(msg.sender)==10,"Incorrect HealthCare Professional user");   
+      require(contractUsers.getType(msg.sender)==24,"Incorrect HealthCare Professional user");   
       _;
     }
 
