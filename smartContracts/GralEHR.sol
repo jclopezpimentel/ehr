@@ -56,22 +56,19 @@ contract GralEHR is OwnerInterface{
         curpMatches[_curp] = GralEHR_MATCH(_digitalId,address(ehrAdd),msg.sender);
     }
 
-
-/*
     modifier ownerOrGovernment(string memory _curp){      
-      UsersInterface contractUsers = UsersInterface(cUsers);
-      
-      BirthCertificate bc = BirthCertificate(curpMatches[_curp].birthCer);
-      require((msg.sender==bc.owner()) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
+      UsersInterface contractUsers = UsersInterface(cUsers);      
+      DigitalIdentity dI = DigitalIdentity(curpMatches[_curp].digitalId);
+      require((msg.sender==dI.owner()) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
       _;
     }
-*/
 
-
-/*
-    function getBirthCertificate(string memory curp) public view ownerOrGovernment(curp) returns (address) {
-      return curpMatches[curp].birthCer; //if it does not exist returns address(0)
+    function getEHRAddress(string memory curp) public view ownerOrGovernment(curp) returns (address) {
+      return curpMatches[curp].ehr; //if it does not exist returns address(0)
     }
 
-*/
+    function whoCreatedThisEHR(string memory curp) public view ownerOrGovernment(curp) returns (address) {
+      return curpMatches[curp].healthCP; //if it does not exist returns address(0)
+    }
+
 }
