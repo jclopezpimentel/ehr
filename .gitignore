@@ -1,0 +1,10 @@
+# Remix compiler outputs
+artifacts/
+.deps/
+
+# Remix local state and history
+.states/
+.rerun
+
+# Optional: Ignore environment variables if you add them later
+#.env
