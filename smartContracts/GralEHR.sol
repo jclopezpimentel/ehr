@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.34;
 
-import "./OwnerInterface.sol";
-import "./EntitiesInterface.sol";
-import "./DigitalIdentity.sol";
 import "./EHR.sol";
 
 contract GralEHR is OwnerInterface{  
@@ -13,26 +10,26 @@ contract GralEHR is OwnerInterface{
    address public government; 
    address public owner;
     string public nameToken="GralEHR";
-   address private cUsers;
+   address private addOfEntities;
 
-    struct GralEHR_MATCH{
-        address digitalId; // address of the digital identity
+    struct GralEHR_Match{
+        address digId; // address of the digital identity
         address ehr; // address of the EHR contract
         address healthCP; // address of the healthcare professional
     }
     //We set the curp and it returns the digitalId and birthCer addresses.        
-    mapping(string => GralEHR_MATCH) private curpMatches;
+    mapping(string => GralEHR_Match) private curpMatches;
     
 
     modifier mustBeGovernment(address _contractU){
-      UsersInterface contractUsers = UsersInterface(_contractU);    
+      EntitiesInterface contractUsers = EntitiesInterface(_contractU);    
       require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
       _;
     }
 
 
   constructor(address _contractUsers) mustBeGovernment(_contractUsers) {
-    cUsers = _contractUsers;
+    addOfEntities = _contractUsers;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;
     government = msg.sender;
@@ -41,7 +38,7 @@ contract GralEHR is OwnerInterface{
 
 
     modifier mustBeHealthCP(){ // must be healthCare Professional  
-      UsersInterface contractUsers = UsersInterface(cUsers);
+      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);
       require(contractUsers.getType(msg.sender)==24,"Incorrect HealthCare Professional user");   
       _;
     }
@@ -49,16 +46,16 @@ contract GralEHR is OwnerInterface{
     function addEHR(string memory _curp, address _digitalId, address _owner) 
      public mustBeHealthCP {
           //Parameter _owner is introuced to verify if it corresponds to the previous introduced _curp
-      require(curpMatches[_curp].digitalId==address(0),"Curp already exists");
+      require(curpMatches[_curp].digId==address(0),"Curp already exists");
       DigitalIdentity didentityAdd = DigitalIdentity(_digitalId);
       require(didentityAdd.owner()==_owner,"Owner address does not match with digital identity");
       EHR ehrAdd = new EHR(_digitalId,_curp,address(this),msg.sender);
-        curpMatches[_curp] = GralEHR_MATCH(_digitalId,address(ehrAdd),msg.sender);
+        curpMatches[_curp] = GralEHR_Match(_digitalId,address(ehrAdd),msg.sender);
     }
 
     modifier ownerOrGovernment(string memory _curp){      
-      UsersInterface contractUsers = UsersInterface(cUsers);      
-      DigitalIdentity dI = DigitalIdentity(curpMatches[_curp].digitalId);
+      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);      
+      DigitalIdentity dI = DigitalIdentity(curpMatches[_curp].digId);
       require((msg.sender==dI.owner()) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
       _;
     }

@@ -4,7 +4,7 @@ pragma solidity 0.8.34;
 //import "./OwnerInterface.sol";
 import "./DigitalIdentity.sol";
 
-contract EHR is OwnerInterface{  
+contract EHR is OwnerInterface, DateInterface{  
     //attributes
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
@@ -12,7 +12,7 @@ contract EHR is OwnerInterface{
     string public nameToken="EHR";
     address public government; //healthcare professional who created the EHR
     address private healthCP; //healthcare professional who created the EHR
-    address private cUsers;
+    address private addOfEntities;
    string private curp;
    
   event healthCPTransactions(
@@ -34,7 +34,7 @@ contract EHR is OwnerInterface{
   constructor(address _digIdentity, string memory _curp, address _contractGralEHR, address _healthCP){    
     require(msg.sender==_contractGralEHR,"Error: incorrect sender");
     DigitalIdentity digIdentity = DigitalIdentity(_digIdentity);
-    cUsers = digIdentity.contractAddOfEntities();
+    addOfEntities = digIdentity.addOfEntities();
     owner = digIdentity.owner();
     government = _healthCP;
     healthCP = _healthCP;
@@ -44,7 +44,7 @@ contract EHR is OwnerInterface{
   }
 
     modifier mustBeHealthCP(){ // must be healthCare Professional  
-      EntitiesInterface contractUsers = EntitiesInterface(cUsers);
+      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);
       require(contractUsers.getType(msg.sender)==24,"Incorrect HealthCare Professional user");   
       _;
     }

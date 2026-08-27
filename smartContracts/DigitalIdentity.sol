@@ -3,8 +3,9 @@ pragma solidity 0.8.34;
 
 import "./OwnerInterface.sol";
 import "./EntitiesInterface.sol";
+import "./DateInterface.sol";
 
-contract DigitalIdentity is OwnerInterface{  
+contract DigitalIdentity is OwnerInterface, DateInterface{  
     //errors
         string constant INCORRECT_GOVERNMENT = "V0001";
         string constant INCORRECT_OWNER = "V0002";
@@ -16,7 +17,10 @@ contract DigitalIdentity is OwnerInterface{
         address public owner;
          string public nameToken="DigitalIdentity";
         address public government;
-        address public contractAddOfEntities;
+        address public addOfEntities;
+           uint public dateCreation;
+           uint public dateLastUpdate;
+
 
         struct LinkedToken{
                 address tokenAdd; //token to be added
@@ -34,7 +38,9 @@ contract DigitalIdentity is OwnerInterface{
         require(msg.sender==_contractOfEntities,"Error: incorrect sender");        
         EntitiesInterface contractEntities = EntitiesInterface(_contractOfEntities);
         require(contractEntities.getType(gover)==0,INCORRECT_GOVERNMENT);
-        contractAddOfEntities = _contractOfEntities;
+        dateCreation = block.timestamp;
+        dateLastUpdate = dateCreation;        
+        addOfEntities = _contractOfEntities;
         government = gover;        
         owner = _owner;
     }
@@ -45,7 +51,7 @@ contract DigitalIdentity is OwnerInterface{
         require(msg.sender==contractFrom.owner(),INCORRECT_OWNER_OF_CONTRACTADDRESS);        
         require(contractFrom.government()!=address(0),NOT_GOVERNMENT);
         require(!linkedTokens[contractAdd].exists,TOKEN_ALREADY_EXIST);
-        EntitiesInterface contractEntities = EntitiesInterface(contractAddOfEntities);
+        EntitiesInterface contractEntities = EntitiesInterface(addOfEntities);
         bool gcert=false;
         if(contractEntities.entityExists(contractFrom.government())){
             gcert = (contractEntities.getType(contractFrom.government())==0?true:false);
@@ -53,6 +59,7 @@ contract DigitalIdentity is OwnerInterface{
         linkedTokens[contractAdd] = LinkedToken(contractAdd,contractFrom.nameToken(),
             contractFrom.government(),gcert,true);
         addressesTokens.push(contractAdd);
+        dateLastUpdate = block.timestamp;        
     }
 
     function numberOfLinkedTokens() public view returns (uint) {        
