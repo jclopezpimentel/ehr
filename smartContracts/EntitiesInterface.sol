@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.36;
+pragma solidity 0.8.34;
 interface EntitiesInterface {
         function getType(address) external view returns (int);
         function getCreator(address _address) external view returns (address);

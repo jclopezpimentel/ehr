@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.36;
+pragma solidity 0.8.34;
 interface OwnerInterface {
         function owner() external view returns (address);
         function nameToken() external view returns (string memory); 

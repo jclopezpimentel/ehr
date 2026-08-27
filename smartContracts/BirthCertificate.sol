@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.23;
+pragma solidity 0.8.34;
 
 //importing the interface
 import "./OwnerInterface.sol";
-import "./UsersInterface.sol";
+import "./EntitiesInterface.sol";
 import "./DigitalIdentity.sol";
 
 contract BirthCertificate is OwnerInterface{  
@@ -38,7 +38,7 @@ contract BirthCertificate is OwnerInterface{
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
     owner = dIdentity.owner();
     cUsers = _contractUsers;
-    UsersInterface contractUsers = UsersInterface(cUsers);    
+    EntitiesInterface contractUsers = EntitiesInterface(cUsers);    
     require(contractUsers.getCreator(owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
 
@@ -61,12 +61,12 @@ contract BirthCertificate is OwnerInterface{
   }
 
     modifier mustBeGovernment(){
-      UsersInterface contractUsers = UsersInterface(cUsers);    
+      EntitiesInterface contractUsers = EntitiesInterface(cUsers);    
       require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
       _;
     }
     modifier ownerOrGovernment(){      
-      UsersInterface contractUsers = UsersInterface(cUsers);    
+      EntitiesInterface contractUsers = EntitiesInterface(cUsers);    
       require((msg.sender==owner) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
       _;
     }
