@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.23;
+pragma solidity 0.8.36;
 
 import "./OwnerInterface.sol";
-import "./UsersInterface.sol";
+import "./EntitiesInterface.sol";
 
 contract DigitalIdentity is OwnerInterface{  
     //errors
@@ -16,7 +16,7 @@ contract DigitalIdentity is OwnerInterface{
         address public owner;
          string public nameToken="DigitalIdentity";
         address public government;
-        address public contractAddOfUsers;
+        address public contractAddOfEntities;
 
         struct LinkedToken{
                 address tokenAdd; //token to be added
@@ -24,17 +24,17 @@ contract DigitalIdentity is OwnerInterface{
                 address creator; //Address creator of the token, usually could be the government
                 bool gcert; //true if the linked token is really a verified government
                             //false if not
-                bool exists; // Boolean flag to track whether a user exists 
+                bool exists; // Boolean flag to track whether a entity exists 
         }
         
         mapping(address => LinkedToken) private linkedTokens;
         address[] private addressesTokens;
 
-    constructor(address _owner, address _contractOfUsers, address gover) {    
-        require(msg.sender==_contractOfUsers,"Error: incorrect sender");        
-        UsersInterface contractUsers = UsersInterface(_contractOfUsers);
-        require(contractUsers.getType(gover)==0,INCORRECT_GOVERNMENT);
-        contractAddOfUsers = _contractOfUsers;
+    constructor(address _owner, address _contractOfEntities, address gover) {    
+        require(msg.sender==_contractOfEntities,"Error: incorrect sender");        
+        EntitiesInterface contractEntities = EntitiesInterface(_contractOfEntities);
+        require(contractEntities.getType(gover)==0,INCORRECT_GOVERNMENT);
+        contractAddOfEntities = _contractOfEntities;
         government = gover;        
         owner = _owner;
     }
@@ -45,10 +45,10 @@ contract DigitalIdentity is OwnerInterface{
         require(msg.sender==contractFrom.owner(),INCORRECT_OWNER_OF_CONTRACTADDRESS);        
         require(contractFrom.government()!=address(0),NOT_GOVERNMENT);
         require(!linkedTokens[contractAdd].exists,TOKEN_ALREADY_EXIST);
-        UsersInterface contractUsers = UsersInterface(contractAddOfUsers);
+        EntitiesInterface contractEntities = EntitiesInterface(contractAddOfEntities);
         bool gcert=false;
-        if(contractUsers.userExists(contractFrom.government())){
-            gcert = (contractUsers.getType(contractFrom.government())==0?true:false);
+        if(contractEntities.entityExists(contractFrom.government())){
+            gcert = (contractEntities.getType(contractFrom.government())==0?true:false);
         }        
         linkedTokens[contractAdd] = LinkedToken(contractAdd,contractFrom.nameToken(),
             contractFrom.government(),gcert,true);
