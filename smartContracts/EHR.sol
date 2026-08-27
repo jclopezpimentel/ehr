@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.23;
+pragma solidity 0.8.36;
 
 //import "./OwnerInterface.sol";
 import "./DigitalIdentity.sol";
@@ -34,7 +34,7 @@ contract EHR is OwnerInterface{
   constructor(address _digIdentity, string memory _curp, address _contractGralEHR, address _healthCP){    
     require(msg.sender==_contractGralEHR,"Error: incorrect sender");
     DigitalIdentity digIdentity = DigitalIdentity(_digIdentity);
-    cUsers = digIdentity.contractAddOfUsers();
+    cUsers = digIdentity.contractAddOfEntities();
     owner = digIdentity.owner();
     government = _healthCP;
     healthCP = _healthCP;
@@ -44,7 +44,7 @@ contract EHR is OwnerInterface{
   }
 
     modifier mustBeHealthCP(){ // must be healthCare Professional  
-      UsersInterface contractUsers = UsersInterface(cUsers);
+      EntitiesInterface contractUsers = EntitiesInterface(cUsers);
       require(contractUsers.getType(msg.sender)==24,"Incorrect HealthCare Professional user");   
       _;
     }

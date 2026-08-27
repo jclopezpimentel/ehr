@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.23;
+pragma solidity 0.8.36;
 
 import "./OwnerInterface.sol";
-import "./UsersInterface.sol";
+import "./EntitiesInterface.sol";
 import "./DigitalIdentity.sol";
 import "./EHR.sol";
 
