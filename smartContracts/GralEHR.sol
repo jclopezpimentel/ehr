@@ -2,6 +2,7 @@
 pragma solidity 0.8.34;
 
 import "./EHR.sol";
+import "./BirthCertificate.sol";
 
 contract GralEHR is OwnerInterface{  
     //attributes
@@ -15,6 +16,7 @@ contract GralEHR is OwnerInterface{
     struct GralEHR_Match{
         address digId; // address of the digital identity
         address ehr; // address of the EHR contract
+        address birthCerAdd; // address of the BirthCertificate contract
         address healthCP; // address of the healthcare professional
     }
     //We set the curp and it returns the digitalId and birthCer addresses.        
@@ -43,14 +45,16 @@ contract GralEHR is OwnerInterface{
       _;
     }
 
-    function addEHR(string memory _curp, address _digitalId, address _owner) 
+    function addEHR(string memory _curp, address _digitalId, address _birthCerAdd, address _owner) 
      public mustBeHealthCP {
           //Parameter _owner is introuced to verify if it corresponds to the previous introduced _curp
       require(curpMatches[_curp].digId==address(0),"Curp already exists");
       DigitalIdentity didentityAdd = DigitalIdentity(_digitalId);
       require(didentityAdd.owner()==_owner,"Owner address does not match with digital identity");
-      EHR ehrAdd = new EHR(_digitalId,_curp,address(this),msg.sender);
-        curpMatches[_curp] = GralEHR_Match(_digitalId,address(ehrAdd),msg.sender);
+      BirthCertificate bc = BirthCertificate(_birthCerAdd);
+      require(bc.digitalIdentity()== _digitalId, "Incorrect digital identity address or birthcertificate address");
+      EHR ehrAdd = new EHR(_digitalId,_curp,address(this),_birthCerAdd,msg.sender);
+        curpMatches[_curp] = GralEHR_Match(_digitalId,address(ehrAdd),_birthCerAdd, msg.sender);
     }
 
     modifier ownerOrGovernment(string memory _curp){      

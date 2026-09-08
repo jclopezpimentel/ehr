@@ -2,8 +2,8 @@
 pragma solidity 0.8.34;
 
 //importing the interface
-import "./OwnerInterface.sol";
-import "./EntitiesInterface.sol";
+//import "./OwnerInterface.sol";
+//import "./EntitiesInterface.sol";
 import "./DigitalIdentity.sol";
 
 contract BirthCertificate is OwnerInterface{  
@@ -11,12 +11,12 @@ contract BirthCertificate is OwnerInterface{
     string public name; 
     string public fLastName; //father last name
     string public mLastName; //father last name
-      bool public gender; //true will be man and false woman
-    uint16 private day; //day of birthdate
-    uint16 private month; //month of birthdate
-    uint16 private year; //year of birthdate
-    string private state; //state of birthdate
-    string private municipalty; //municipalty of birthdate   
+      bool private genderM; //true will be man and false woman
+      uint private birthday; //unix epoch
+    uint16 private locality; //locality of birthdate: it is only the code
+    uint16 private municipalty; //municipalty of birthdate: it is only the code      
+    uint16 private state; //state of birthdate: it is only the code    
+    uint16 private country; //country of birthdate: it is only the code  
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public tokenFather; //null 0x0000000000000000000000000000000000000000
@@ -25,7 +25,7 @@ contract BirthCertificate is OwnerInterface{
    address public owner;
     string public nameToken="BirthCertificate";
     address public digitalIdentity; // This is the digital identity of the user
-   address private cUsers;
+   address private addOfEntities;
    
   event governmentTransactions(
       address indexed executor,
@@ -33,40 +33,39 @@ contract BirthCertificate is OwnerInterface{
   );
 
   constructor(string memory _name, string memory _fLastName, string memory _mLastName, bool _gender, 
-              uint16 _day, uint16 _month, uint16 _year, string memory _state, string memory _municipality,
+              uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country,
               address _contractUsers, address _digIden) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
     owner = dIdentity.owner();
-    cUsers = _contractUsers;
-    EntitiesInterface contractUsers = EntitiesInterface(cUsers);    
+    addOfEntities = _contractUsers;
+    EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
     require(contractUsers.getCreator(owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
-
+    
     name = _name; 
     fLastName = _fLastName; 
     mLastName = _mLastName; 
-    gender = _gender; //true will be man and false woman
-    day = _day; 
-    month = _month; 
-    year = _year;
-    state =_state;
+    genderM = _gender; //true will be man and false woman
+    birthday = _birthday;     
+    locality = _locality;
     municipalty = _municipality;
+    state =_state;
+    country = _country;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;
     tokenFather=address(0);
     tokenMother=address(0);
     government = msg.sender;
-    
     emit governmentTransactions(msg.sender,dateCreation);
   }
 
     modifier mustBeGovernment(){
-      EntitiesInterface contractUsers = EntitiesInterface(cUsers);    
+      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
       require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
       _;
     }
     modifier ownerOrGovernment(){      
-      EntitiesInterface contractUsers = EntitiesInterface(cUsers);    
+      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
       require((msg.sender==owner) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
       _;
     }
@@ -83,23 +82,30 @@ contract BirthCertificate is OwnerInterface{
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
-    function getDay() public view ownerOrGovernment returns (uint16){
-      return day;
+    function isMale() public view ownerOrGovernment returns (bool){
+      return genderM;
     }
 
-    function getMonth() public view ownerOrGovernment returns (uint16){
-      return month;
+
+    function getBirthDay() public view ownerOrGovernment returns (uint){
+      return birthday;
     }
 
-    function getYear() public view ownerOrGovernment returns (uint16){
-      return year;
+    function getLocality() public view ownerOrGovernment returns (uint16){
+      return locality;
     }
 
-    function getState() public view ownerOrGovernment returns (string memory){
+    function getMunicipalty() public view ownerOrGovernment returns (uint16){
+      return municipalty;
+    }
+
+    function getState() public view ownerOrGovernment returns (uint16){
       return state;
     }
 
-    function getMunicipalty() public view ownerOrGovernment returns (string memory){
-      return municipalty;
+    function getCountry() public view ownerOrGovernment returns (uint16){
+      return country;
     }
+    
+
 }

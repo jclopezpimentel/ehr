@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.34;
 
-//import "./OwnerInterface.sol";
 import "./DigitalIdentity.sol";
 
 contract EHR is OwnerInterface, DateInterface{  
@@ -14,6 +13,7 @@ contract EHR is OwnerInterface, DateInterface{
     address private healthCP; //healthcare professional who created the EHR
     address private addOfEntities;
    string private curp;
+   address private birthCerAdd;
    
   event healthCPTransactions(
       address indexed executor,
@@ -21,9 +21,10 @@ contract EHR is OwnerInterface, DateInterface{
   );
 
     struct HealthRecord{
-        string id; // identifier of the record
+        string id; // identifier in the off-chain
         string title; //the title of the record
-        string date; //date of the record in epoch time
+        uint date; //date of the record in epoch time
+        string section; //section of the NOM-004
         string hashDetails; //details stored in Hash format
         address healthCP; //healt-care who stored the clinic history
     }
@@ -31,15 +32,19 @@ contract EHR is OwnerInterface, DateInterface{
     mapping(uint => HealthRecord) private healthRecords;
     uint private idAch=0;
 
-  constructor(address _digIdentity, string memory _curp, address _contractGralEHR, address _healthCP){    
-    require(msg.sender==_contractGralEHR,"Error: incorrect sender");
+  constructor(address _digIdentity, string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP){    
+    //This line is checking if the contract is called by other contract.
+    require(msg.sender.code.length > 0,"It was not called by a contract");
+    require(msg.sender==_gralEHR,"Error: incorrect sender");
     DigitalIdentity digIdentity = DigitalIdentity(_digIdentity);
     addOfEntities = digIdentity.addOfEntities();
+    birthCerAdd = _birthCerAdd;
     owner = digIdentity.owner();
     government = _healthCP;
     healthCP = _healthCP;
     curp = _curp;
-    dateCreation = block.timestamp;       
+    dateCreation = block.timestamp;
+    dateLastUpdate = dateCreation;       
     emit healthCPTransactions(msg.sender,dateCreation);
   }
 
@@ -49,9 +54,9 @@ contract EHR is OwnerInterface, DateInterface{
       _;
     }
 
-    function addHealthRecord(string memory id, string memory title, string memory date, string memory hashDetails) 
+    function addHealthRecord(string memory id, string memory title, string memory _section, string memory hashDetails) 
      public mustBeHealthCP {
-        healthRecords[idAch] = HealthRecord(id,title,date,hashDetails, msg.sender);
+        healthRecords[idAch] = HealthRecord(id,title,block.timestamp,_section,hashDetails, msg.sender);
         idAch++;
     }
 
@@ -72,4 +77,15 @@ contract EHR is OwnerInterface, DateInterface{
                         )
                     );
     }
+
+    modifier ownerGovernmentOrHealthCP(){      
+      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
+      require((msg.sender==owner) || (contractUsers.getType(msg.sender)==0) || (msg.sender==healthCP),"Owner or Governments can execute this method");
+      _;
+    }
+
+    function getBirthCertificate() public view ownerGovernmentOrHealthCP returns (address){
+      return birthCerAdd;
+    }
+
 }

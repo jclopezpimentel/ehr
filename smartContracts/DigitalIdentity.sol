@@ -34,7 +34,9 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         mapping(address => LinkedToken) private linkedTokens;
         address[] private addressesTokens;
 
-    constructor(address _owner, address _contractOfEntities, address gover) {    
+    constructor(address _owner, address _contractOfEntities, address gover) { 
+        //This line is checking if the contract is called by other contract.   
+        require(msg.sender.code.length > 0,"It was not called by a contract");
         require(msg.sender==_contractOfEntities,"Error: incorrect sender");        
         EntitiesInterface contractEntities = EntitiesInterface(_contractOfEntities);
         require(contractEntities.getType(gover)==0,INCORRECT_GOVERNMENT);
