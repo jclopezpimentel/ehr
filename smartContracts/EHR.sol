@@ -21,16 +21,16 @@ contract EHR is OwnerInterface, DateInterface{
   );
 
     struct HealthRecord{
-        string id; // identifier in the off-chain
-        string title; //the title of the record
+        bytes32 idH; // identifier in the off-chain in hash format
+        bytes32 titleHash; //the title hash of the record
         uint date; //date of the record in epoch time
-        string section; //section of the NOM-004
-        string hashDetails; //details stored in Hash format
+        bytes32 sectionHash; //section hash of the NOM-004
+        bytes32 hashDetails; //General details stored in Hash format
         address healthCP; //healt-care who stored the clinic history
     }
         
-    mapping(uint => HealthRecord) private healthRecords;
-    uint private idAch=0;
+    mapping(bytes32 => HealthRecord) private healthRecords;
+    //uint private idAch=0;
 
   constructor(address _digIdentity, string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP){    
     //This line is checking if the contract is called by other contract.
@@ -54,29 +54,19 @@ contract EHR is OwnerInterface, DateInterface{
       _;
     }
 
-    function addHealthRecord(string memory id, string memory title, string memory _section, string memory hashDetails) 
+    function addHealthRecord(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 hashDetails) 
      public mustBeHealthCP {
-        healthRecords[idAch] = HealthRecord(id,title,block.timestamp,_section,hashDetails, msg.sender);
-        idAch++;
+        require(healthRecords[idH].idH!=idH,"Error: Id already exists");
+        healthRecords[idH] = HealthRecord(idH,titleH,block.timestamp,sectionH,hashDetails, msg.sender);
+        //idAch++;
     }
 
-    function numberOfRecords() public view returns (uint) {        
-        return (idAch);
+    function checkEHRIntegrity(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 hashDetails) public view returns (bool) {      
+        if(healthRecords[idH].idH==idH && healthRecords[idH].titleHash==titleH && healthRecords[idH].sectionHash==sectionH && healthRecords[idH].hashDetails==hashDetails) 
+          return true;
+        else return false;
     }
 
-    function getRecord(uint id) public view returns (string memory) {
-        require((idAch>0 && idAch>id),"Error: not record for such id");
-        return string(
-                        abi.encodePacked(
-                            "{",
-                            '"id":"', healthRecords[id].id, '",',
-                            '"title":"', healthRecords[id].title, '",',
-                            '"date":"', healthRecords[id].date, '",',
-                            '"hashDetails":"', healthRecords[id].hashDetails, '"',
-                            "}"
-                        )
-                    );
-    }
 
     modifier ownerGovernmentOrHealthCP(){      
       EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
