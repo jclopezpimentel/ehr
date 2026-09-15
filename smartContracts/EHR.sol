@@ -8,7 +8,7 @@ contract EHR is OwnerInterface, DateInterface{
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public owner;
-    string public nameToken="EHR";
+    string public typeContract="EHR";
     address public government; //healthcare professional who created the EHR
     address private healthCP; //healthcare professional who created the EHR
     address private addOfEntities;

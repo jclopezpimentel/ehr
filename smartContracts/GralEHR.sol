@@ -10,7 +10,7 @@ contract GralEHR is OwnerInterface{
       uint public dateLastUpdate=0;
    address public government; 
    address public owner;
-    string public nameToken="GralEHR";
+    string public typeContract="GralEHR";
    address private addOfEntities;
 
     struct GralEHR_Match{

@@ -12,7 +12,7 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
     mapping(address => Entity) private entities;
 
     address public owner;
-     string public nameToken="Entities";
+     string public typeContract="Entities";
     address public government;
        uint public dateCreation;
        uint public dateLastUpdate;

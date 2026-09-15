@@ -23,7 +23,7 @@ contract BirthCertificate is OwnerInterface{
    address public tokenMother;
    address public government;
    address public owner;
-    string public nameToken="BirthCertificate";
+    string public typeContract="BirthCertificate";
     address public digitalIdentity; // This is the digital identity of the user
    address private addOfEntities;
    
