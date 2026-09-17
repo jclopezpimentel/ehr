@@ -45,7 +45,7 @@ contract GralEHR is OwnerInterface{
       _;
     }
 
-    function addEHR(string memory _curp, address _digitalId, address _birthCerAdd, address _owner) 
+    function createEHR(string memory _curp, address _digitalId, address _birthCerAdd, address _owner) 
      public mustBeHealthCP {
           //Parameter _owner is introuced to verify if it corresponds to the previous introduced _curp
       require(curpMatches[_curp].digId==address(0),"Curp already exists");
