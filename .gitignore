@@ -9,3 +9,10 @@ artifacts/
 
 # Optional: Ignore environment variables if you add them later
 #.env
+
+#Others
+.DS_Store
+EHR_simulator/programOld/
+EHR_simulator/programOk/ehr/*.class
+apigateway/apigatewayApp/node_modules/
+*.env
