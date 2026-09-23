@@ -15,4 +15,5 @@ artifacts/
 EHR_simulator/programOld/
 EHR_simulator/programOk/ehr/*.class
 apigateway/apigatewayApp/node_modules/
+entities/entitiesApp/node_modules/
 *.env

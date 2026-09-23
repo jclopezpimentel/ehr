@@ -23,6 +23,11 @@ public class MainWindow extends JFrame{
         JButton buttonSimulate = new JButton("Simulate");
         buttonSimulate.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {                
+                Utilerias util = new Utilerias();
+                String[] keys = new String[0];
+                String[] values = new String[0];
+                String result = util.connectWithGET("localhost",5500, keys, values, "ip");
+                System.out.println("Result from connect: " + result);
                 //ManufacturersWindow v = new ManufacturersWindow("Manufacturer Setting");
                 //v.setVisible(true);       
             }
