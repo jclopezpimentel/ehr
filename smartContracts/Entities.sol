@@ -12,7 +12,6 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
     mapping(address => Entity) private entities;
 
     address public owner;
-     string public typeContract="Entities";
     address public government;
        uint public dateCreation;
        uint public dateLastUpdate;
@@ -58,6 +57,10 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
         dateLastUpdate = block.timestamp;        
         DigitalIdentity didentityAdd = new DigitalIdentity(_entityAddress,address(this),msg.sender);
         entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), _entityType);        
+    }
+
+    function typeContract() external pure override returns (string memory){
+        return "Entities";
     }
 
     function getType(address _address) public view entityExistsIn(_address) returns (int) {

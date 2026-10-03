@@ -22,8 +22,8 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
            uint public dateLastUpdate;
 
 
-        struct LinkedToken{
-                address tokenAdd; //token to be added
+        struct LinkedContract{
+                address contractAdd; //contract to be added
                 string typeContract; 
                 address creator; //Address creator of the token, usually could be the government
                 bool gcert; //true if the linked token is really a verified government
@@ -31,8 +31,8 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
                 bool exists; // Boolean flag to track whether a entity exists 
         }
         
-        mapping(address => LinkedToken) private linkedTokens;
-        address[] private addressesTokens;
+        mapping(address => LinkedContract) private linkedContracts;
+        address[] private addressesContracts;
 
     constructor(address _owner, address _contractOfEntities, address gover) { 
         //This line is checking if the contract is called by other contract.   
@@ -47,39 +47,39 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         owner = _owner;
     }
 
-    function linkToken(address contractAdd) public {
+    function linkContract(address contractAdd) public {
         require(msg.sender==owner,INCORRECT_OWNER);
         OwnerInterface contractFrom = OwnerInterface(contractAdd);
         require(msg.sender==contractFrom.owner(),INCORRECT_OWNER_OF_CONTRACTADDRESS);        
         require(contractFrom.government()!=address(0),NOT_GOVERNMENT);
-        require(!linkedTokens[contractAdd].exists,TOKEN_ALREADY_EXIST);
+        require(!linkedContracts[contractAdd].exists,TOKEN_ALREADY_EXIST);
         EntitiesInterface contractEntities = EntitiesInterface(addOfEntities);
         bool gcert=false;
         if(contractEntities.entityExists(contractFrom.government())){
             gcert = (contractEntities.getType(contractFrom.government())==0?true:false);
         }        
-        linkedTokens[contractAdd] = LinkedToken(contractAdd,contractFrom.typeContract(),
+        linkedContracts[contractAdd] = LinkedContract(contractAdd,contractFrom.typeContract(),
             contractFrom.government(),gcert,true);
-        addressesTokens.push(contractAdd);
+        addressesContracts.push(contractAdd);
         dateLastUpdate = block.timestamp;        
     }
 
-    function numberOfLinkedTokens() public view returns (uint) {        
-        return (addressesTokens.length);
+    function numberOfLinkedContracts() public view returns (uint) {        
+        return (addressesContracts.length);
     }
 
-    function getNameToken(address _tokenAdd) public view returns (string memory) {
-        LinkedToken memory lToken = linkedTokens[_tokenAdd];
+    function getNameContract(address _contractAdd) public view returns (string memory) {
+        LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.typeContract);
     }
 
-    function creatorIsGovernment(address _tokenAdd) public view returns (bool) {
-        LinkedToken memory lToken = linkedTokens[_tokenAdd];
+    function creatorIsGovernment(address _contractAdd) public view returns (bool) {
+        LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.gcert);
     }
 
-    function getCreatorOfToken(address _tokenAdd) public view returns (address) {
-        LinkedToken memory lToken = linkedTokens[_tokenAdd];
+    function getCreatorOfContract(address _contractAdd) public view returns (address) {
+        LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.creator);
     }
  }
