@@ -12,20 +12,18 @@
 
     * ### Manual Installation option
       - #### Step 1.
-        Install **DigitalIdentityImage**, follow the instructions explained in the file README.md within the folder [image/](https://github.com/UPTokenizing/digitalIdentity/tree/main/image).
+        Install **EHRImage**, follow the instructions explained in the file README.md within the folder [image/](https://github.com/xxxx/ehr/tree/main/image).
       - #### Step 2.
-        Install **Ganache**, follow the instructions explained in the file README.md within the folder [ganache/](https://github.com/UPTokenizing/digitalIdentity/tree/main/ganache).
+        Install **Ganache**, follow the instructions explained in the file README.md within the folder [ganache/](https://github.com/xxxx/ehr/tree/main/ganache).
       - #### Step 3.
-        Install **API-Gateway**, follow the instructions explained in the file README.md within the folder [apigateway/](https://github.com/UPTokenizing/digitalIdentity/tree/main/apigateway).
+        Install **API-Gateway**, follow the instructions explained in the file README.md within the folder [apigateway/](https://github.com/xxxx/ehr/tree/main/apigateway).
       - #### Step 4.
-        Install **BirthCertificate**, follow the instructions explained in the file README.md within the folder [birthCertificate/](https://github.com/UPTokenizing/digitalIdentity/tree/main/birthCertificate).
+        Install **BirthCertificate**, follow the instructions explained in the file README.md within the folder [birthCertificate/](https://github.com/xxxx/ehr/tree/main/birthCertificate).
       - #### Step 5.
-        Install **DigitalIdentity**, follow the instructions explained in the file README.md within the folder [digitalIdentity/](https://github.com/UPTokenizing/digitalIdentity/tree/main/digitalIdentity).
+        Install **DigitalIdentity**, follow the instructions explained in the file README.md within the folder [digitalIdentity/](https://github.com/xxxx/ehr/tree/main/digitalIdentity).
       - #### Step 6.
-        Install **Users** module, follow the instructions explained in the file README.md within the folder [users/](https://github.com/UPTokenizing/digitalIdentity/tree/main/users).
+        Install **Entities** module, follow the instructions explained in the file README.md within the folder [entities/](https://github.com/xxxx/ehr/tree/main/users).
       - #### Step 7.
-        Install **ScholarCurriculum**, follow the instructions explained in the file README.md within the folder [scholarCurriculum/](https://github.com/UPTokenizing/digitalIdentity/tree/main/scholarCurriculum).
-      - #### Step 8.
         **Create the MySQL container**
         - Pull MySQL image
         ```bash
@@ -55,7 +53,7 @@
         **Front-End Installation**
           Follow the instructions explained in the file README.md within the folders [frontendBirthCertificate/](https://github.com/UPTokenizing/digitalIdentity/tree/main/frontendBirthCertificate), [frontendIdentityDigital/](https://github.com/UPTokenizing/digitalIdentity/tree/main/frontendIdentityDigital), [frontendUsersInteface/](https://github.com/UPTokenizing/digitalIdentity/tree/main/frontendUsersInteface), and [frontendScholarCurriculum/](https://github.com/UPTokenizing/digitalIdentity/tree/main/frontendScholarCurriculum).
       - #### Step 11.
-        Continue with [Deployment](https://github.com/UPTokenizing/digitalIdentity/blob/main/README.md#deployment)
+        Continue with [Deployment](README.md#deployment)
 
 
     * ### Automatic Installation option
@@ -111,5 +109,5 @@
         Get-ChildItem -Recurse -Filter ".setup_done" | Remove-Item -Force
         ```
       - #### Step 3.
-        Continue with [Deployment](https://github.com/UPTokenizing/digitalIdentity/blob/main/README.md#deployment)
+        Continue with [Deployment](README.md#deployment)
         

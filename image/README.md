@@ -22,11 +22,11 @@ There you can see two files: Dockerfile and this readme:
 
 Download ubuntu image:
       
-    sudo docker pull ubuntu:latest
+    sudo docker pull ubuntu:26.04
     
 Build the ubuntu image in a repository:
       
-      sudo docker build -t digitalidentityimage <PATHIMAGEN>
+      sudo docker build -t ehrimage <PATHIMAGEN>
 
 To see the image created, use the following command:
 
@@ -40,7 +40,7 @@ In the list, you can see the image created.
 
 Now, run ubuntu:
 
-    sudo docker run -it digitalidentityimage
+    sudo docker run -it ehrimage
 
   You can exit of this instance:
     
@@ -52,6 +52,6 @@ Now, run ubuntu:
 
   now, stop it:
     
-    sudo docker stop <digitalidentityimageId>
+    sudo docker stop <ehrimageId>
 
 Ready, you have installed the conditions.
