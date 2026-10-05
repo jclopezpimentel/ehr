@@ -70,21 +70,23 @@ within a [local machine](Local-Setup.md).
     sudo docker start <DB_HOST>.
    ```
 --> 
-You might execute the following command in the host operating system to check if every service is ok:
+You might execute the following command in the host operating system to check:
+Entities:
     
     curl -X GET http://localhost:5500/proofEntity
-<!--    curl -X GET http://localhost:5500/proof
-    curl -X GET http://localhost:5500/proofd
-    curl -X GET http://localhost:5500/proofsc
--->
 
 It must return:
    
     Returning: route /proof users
-<!--    Returning: route /proof
-    Returning: route /proof digital
-    Returning: route /proof scholarCertificates
--->
+
+BirthCertificate:
+    
+    curl -X GET http://localhost:5500/proofBC
+
+It must return:
+   
+    Returning: route /proof birthCertificate
+
 
 ### After completing the installation and deployment process, follow the [User Manual](https://github.com/UPTokenizing/digitalIdentity/blob/main/UserManual.pdf).
 

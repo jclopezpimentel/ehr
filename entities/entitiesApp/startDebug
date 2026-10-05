@@ -1,1 +1,1 @@
-DEBUG=userint:* npm run dev
+DEBUG=entitiesapp:* npm run dev
