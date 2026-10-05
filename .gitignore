@@ -16,4 +16,6 @@ EHR_simulator/programOld/
 EHR_simulator/programOk/ehr/*.class
 apigateway/apigatewayApp/node_modules/
 entities/entitiesApp/node_modules/
+birthCertificate/birthCertificateApp/node_modules/
+ganache/ganache/
 *.env
