@@ -54,11 +54,11 @@ initializer.replacer = function(key, value) {
 	}
   }
 
-initializer.toResult = function(isError,num,value){ 
+initializer.toResult = function(result,num,value){ 
 	var resul = { 
-		"Error": isError, // it is false when there is no error
+		"Result": result, // it is false when there is no error
 		"Num": num, 
-		"Return": value 
+		"Return": value // it is the return value of the function, when there is no error, or the error message when there is an error
 	};
 	return resul;
 }

@@ -2,6 +2,6 @@ var express = require('express');
 var router = express.Router();
 var createController = require('../controller/createController');
 
-router.post('/', createController.createGover);
+router.post('/', createController.create);
 
 module.exports = router;

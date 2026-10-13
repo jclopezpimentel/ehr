@@ -2,7 +2,7 @@ var initializer = {};
 
 initializer.errors = function(numError){
     let resultError=[];
-    resultError[0]="ERROR: It is required to be a manufacturer or a token valid";
+    resultError[0]="ERROR: It is not possible to consult the function in the smart contract";
     resultError[1]="ERROR: It must not contain empty values";
     resultError[2]="ERROR: It is not possible to establish connection with blockchain network";
     //resultError[3]="ERROR: It is not possible to deploy the contract";
@@ -12,8 +12,10 @@ initializer.errors = function(numError){
     resultError[7]="ERROR: it was not possible to mint";
     resultError[8]="ERROR: ErrorNetwork";
     resultError[9]="ERROR: it loses connection with the blockchain network";
-    resultError[10]="ERROR: it is not identified yet 2";
-    resultError[11]= "Function not found in blockchain";
+    resultError[10]="ERROR: internal error in the Blockchain network";
+    resultError[11]= "ERROR: Incorrect function name, it cannot link with one in the blockchain";
+    resultError[12]= "ERROR: web3 is not defined";
+    resultError[13]= "ERROR: while processing getInfo, internally an error was generated";
     return resultError[numError];
 }
 

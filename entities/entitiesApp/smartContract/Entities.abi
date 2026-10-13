@@ -152,6 +152,19 @@
   },
   {
     "inputs": [],
+    "name": "typeContrac",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "typeContract",
     "outputs": [
       {
@@ -160,7 +173,7 @@
         "type": "string"
       }
     ],
-    "stateMutability": "view",
+    "stateMutability": "pure",
     "type": "function"
   }
 ]

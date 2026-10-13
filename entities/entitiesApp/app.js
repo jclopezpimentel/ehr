@@ -8,8 +8,8 @@ var indexRouter = require('./routes/index');
 var proof = require('./routes/proof');
 var app = express();
 //global variable
-global.contractABIPath = "./smartContract/Entities.abi";
-global.contractByteCodeSource = "./smartContract/Entities.bytecode";
+//global.contractABIPath = "./smartContract/Entities.abi";
+//global.contractByteCodeSource = "./smartContract/Entities.bytecode";
 global.blockchainAddress = "ws://172.18.1.2:8546";
 
 // view engine setup
@@ -25,9 +25,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //var usersRouter = require('./routes/users');
 var createRouter = require('./routes/create');
-//var consult = require('./routes/consult');
-//var getInfo = require('./routes/getInfo');
-//var registerUser = require('./routes/registerUser');
+var consult = require('./routes/consult');
+var consultP = require('./routes/consultP');
+var registerEntity = require('./routes/registerEntity');
+var getInfo = require('./routes/getInfo');
+//Digital identity services
+var linkContract = require('./routes/linkContract'); 
 
 
 
@@ -35,10 +38,12 @@ app.use('/', indexRouter);
 app.use('/proofEntity', proof);
 //app.use('/users', usersRouter);
 app.use('/createEntity', createRouter);
-//app.use('/consultEntity', consult);
-//app.use('/getInfoEntity', getInfo);
-//app.use('/registerEntity', registerUser);
-
+app.use('/consultEntity', consult);
+app.use('/registerEntity', registerEntity);
+app.use('/consultEntityP', consultP);
+app.use('/getInfoEntity', getInfo);
+//Digital identity services
+app.use('/linkContract', linkContract);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

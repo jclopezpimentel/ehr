@@ -1,5 +1,7 @@
 var errorControl = require('./errors');
 var utilities = require('./utilities');
+var consultP = require('./consultPController');
+var listFuncInChain = require('./listFunctionsInBlockchain');
 var initializer = {};
 
 // Function to serialize BigInt values in an object
@@ -11,68 +13,70 @@ function serializeBigInt(obj) {
     );
 }
 
-// Function to call contract methods
+
 async function callingGetInfo(req) {
-    const contractABI = utilities.getContainFileJSON(contractABIPath); // Smart contract ABI
-    const contractAdd = req.query.contractAdd;
-    const userAddress = req.query.userAddress;
-    const publicMethods = ["getType", "getDigIdentityAdd", "getCreator"];
+    const contractAdd = req.body.contractAdd; 
+    const functionNames = req.body.functionNames;
+    const contractABI = utilities.getContainFileJSON(req.body.contractABIPath);
+    const gas = req.body.gas;
+    const sender = req.body.sender;
+    const address = req.body.address;    
     let result = {};
-
-    try {
-        const { Web3 } = require('web3');
-        const ws = await utilities.connectToServer();
-        if (ws.Result === "Error") {
-            throw new Error("Node connection failed.");
-        }
-
-        const web3 = new Web3(Web3.givenProvider || blockchainAddress);
-        const userContract = new web3.eth.Contract(contractABI, contractAdd);
-
+    let hayError = false;
         // Call each getter method
-        for (let method of publicMethods) {
-            try {
-                const response = await userContract.methods[method](userAddress).call();
-                result[method] = response;
-            } catch (error) {
-                console.log(`Error calling ${method}: ${error.message}`);
+    for (let method of functionNames) {
+            const response = await consultP.executeConsult(method, contractAdd, contractABI,gas, sender,address); 
+            result[method] = response;
+            if(response.Result === "Error"){
+                console.log(`Error calling ${method}: while processing the request`);
                 result[method] = `Error: ${error.message}`;
+                hayError = true;
+                break; // Exit the loop on first error
             }
-        }
-
-        web3.currentProvider.disconnect(); // Disconnect provider after use
-        return { Result: "Success", Data: serializeBigInt(result) };
-    } catch (error) {
-        console.log("Error during getInfo: " + error.message);
-        return {
-            Result: "Error",
-            Description: error.message
-        };
+            console.log(`Response from ${method}:`, response);
     }
+    if (hayError) {
+        resul = utilities.toResult("Error", 13, errorControl.errors(13));
+    } else {
+        //resul = utilities.toResult("Ok", "0", serializeBigInt(result));
+        resul = utilities.toResult("Ok", "0", result);
+    }
+    return resul;
 }
 
-// Route for getInfo
 initializer.getInfo = async function (req, res) {
-    const contractAdd = req.query.contractAdd;
-    const userAddress = req.query.userAddress;
+    const funName = "getInfoEntity"; //public method or attribute	
+    const [found, functionNames,contractABIPath,contractByteCodeSource] = listFuncInChain.searchFunctionAndSmartContract(funName);
+    if(found === "NotFound"){
+        errNNum = "11";
+        resul = utilities.toResult("Error", errNNum, errorControl.errors(errNNum));// it is false when there is no error
+    }else{
+        const entityAdd = req.query.entityAdd;
+        const gas = req.query.gas;	
+        const sender = req.query.sender;
+        const address = req.query.address;
+        const obj = {
+            body:
+            {
+                functionNames: functionNames,
+                contractABIPath: contractABIPath,
+                contractByteCodeSource: contractByteCodeSource,
+                contractAdd:entityAdd,
+                gas:gas,
+                sender:sender,
+                address:address
+            }
+        };
+        const errNum = errorControl.someFieldIsEmpty(obj);
+        if (errNum) {  //				
+            resul = utilities.toResult("Error", errNum.toString(), errorControl.errors(errNum));
+        } else {
+            resul = await callingGetInfo(obj);
+            console.log("Result from getInfo: ", resul);
+        }
 
-    // Validate query parameters
-    if (!contractAdd || !userAddress) {
-        return res.send({
-            Result: "Error",
-            Description: "Missing required query parameters: contractAdd, userAddress"
-        });
     }
-
-    try {
-        const response = await callingGetInfo(req);
-        res.send(response);
-    } catch (error) {
-        res.send({
-            Result: "Error",
-            Description: error.message
-        });
-    }
+    res.send(resul);
 };
 
 module.exports = initializer;
