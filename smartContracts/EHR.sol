@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.23;
 
 import "./DigitalIdentity.sol";
 
@@ -8,7 +8,7 @@ contract EHR is OwnerInterface, DateInterface{
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public owner;
-    string public typeContract="EHR";
+    int public typeContract=4;
     address public government; //healthcare professional who created the EHR
     address private healthCP; //healthcare professional who created the EHR
     address private addOfEntities;

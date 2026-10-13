@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.34;
+pragma solidity ^0.8.23;
 
 import "./DigitalIdentity.sol";
 
@@ -13,6 +13,7 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
 
     address public owner;
     address public government;
+    int public typeContract = 1;
        uint public dateCreation;
        uint public dateLastUpdate;
 
@@ -43,7 +44,6 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
         dateLastUpdate = dateCreation;        
         government = msg.sender; // The government deploy the contract
         owner = government; //The government is also the owner
-        // Setting government entityType to 0
         entities[government] = Entity(government,address(0), 0); 
     }
 
@@ -57,10 +57,6 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
         dateLastUpdate = block.timestamp;        
         DigitalIdentity didentityAdd = new DigitalIdentity(_entityAddress,address(this),msg.sender);
         entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), _entityType);        
-    }
-
-    function typeContract() external pure override returns (string memory){
-        return "Entities";
     }
 
     function getType(address _address) public view entityExistsIn(_address) returns (int) {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.23;
 
 import "./OwnerInterface.sol";
 import "./EntitiesInterface.sol";
@@ -15,7 +15,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         
     //attributes
         address public owner;
-         string public typeContract="DigitalIdentity";
+         int public typeContract=2;
         address public government;
         address public addOfEntities;
            uint public dateCreation;
@@ -24,7 +24,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
 
         struct LinkedContract{
                 address contractAdd; //contract to be added
-                string typeContract; 
+                int typeContract; 
                 address creator; //Address creator of the token, usually could be the government
                 bool gcert; //true if the linked token is really a verified government
                             //false if not
@@ -68,7 +68,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         return (addressesContracts.length);
     }
 
-    function getNameContract(address _contractAdd) public view returns (string memory) {
+    function getNameContract(address _contractAdd) public view returns (int) {
         LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.typeContract);
     }

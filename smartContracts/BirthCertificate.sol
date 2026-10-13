@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.34;
+pragma solidity 0.8.23;
 
 //importing the interface
 //import "./OwnerInterface.sol";
@@ -23,7 +23,7 @@ contract BirthCertificate is OwnerInterface{
    address public tokenMother;
    address public government;
    address public owner;
-    string public typeContract="BirthCertificate";
+    int public typeContract=3;
     address public digitalIdentity; // This is the digital identity of the user
    address private addOfEntities;
    
@@ -34,10 +34,11 @@ contract BirthCertificate is OwnerInterface{
 
   constructor(string memory _name, string memory _fLastName, string memory _mLastName, bool _gender, 
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country,
-              address _contractUsers, address _digIden) {
+              address _contractEntities, address _digIden) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
+    digitalIdentity = _digIden;
     owner = dIdentity.owner();
-    addOfEntities = _contractUsers;
+    addOfEntities = _contractEntities;
     EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
     require(contractUsers.getCreator(owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
