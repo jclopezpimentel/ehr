@@ -25,35 +25,7 @@ async function executeConstructor(gas, from, contractABI, contractByteCodeObj) {
 			await contract.send( //gasLimit must be set to 6721975, otherwise it will not work
 				{ from: from, gas: gas, gasPrice: "20000000000", nonce: nonce }).on('receipt', function (receipt) {
 					console.log("Entró4: " + from);
-//					from = from.toUpperCase();
-//					const fromRet = receipt.from.toUpperCase();
-//					console.log("Entró5: " + from);
 					y = JSON.parse(JSON.stringify(receipt, utilities.replacer));	
-/*					if (from.toUpperCase() === fromRet) {
-						y = {
-							"transactionHash": receipt.transactionHash.toString(),
-							"contractAddress": receipt.contractAddress.toString(),
-							"gasUsed": receipt.gasUsed.toString(),
-							"blockNumber": receipt.blockNumber.toString(),
-							"blockHash": receipt.blockHash.toString(),
-							"from": fromRet.toString(),
-							"fromorigin": from.toString()
-						};
-						
-					} else {
-						y = {
-							"transactionHash": receipt.transactionHash.toString(),
-							"contractAddress": receipt.contractAddress.toString(),
-							"gasUsed": receipt.gasUsed.toString(),
-							"blockNumber": receipt.blockNumber.toString(),
-							"blockHash": receipt.blockHash.toString(),
-							"from": fromRet.toString(),
-							"fromorigin": from.toString()
-						};
-						
-						//console.log("ErrRare: from:" + from + "\n" + "fromRet:" + fromRet + "\n" + "nonce:" + nonce );
-						console.log("ErrRare: from:" + from + "\n" + "fromRet:" + fromRet);
-					}*/
 				}).on("error", function (error) {
 					console.log("Error: " + error + "\n from: " + from);
 					y = { //antes tenía resul

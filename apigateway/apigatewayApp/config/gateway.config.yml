@@ -112,9 +112,9 @@ apiEndpoints:
     host: localhost
     paths: '/proofBC'    
 
-#  birthcertificateCreate:
-#    host:  localhost
-#    paths: '/create' 
+  birthcertificateCreate:
+    host:  localhost
+    paths: '/createBC' 
 
 
 #  birthcertificateSetAddress:
@@ -248,7 +248,7 @@ pipelines:
   birthcertificatePipeline:
     apiEndpoints:
       - birthcertificateproof
-#      - birthcertificateCreate
+      - birthcertificateCreate
 #      - birthcertificateConsult
 #      - birthcertificateSetAddress
 #      - birthcertificatPrivate
