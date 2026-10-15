@@ -8,15 +8,21 @@ import "./DigitalIdentity.sol";
 
 contract BirthCertificate is OwnerInterface{  
     //attributes
-    string public name; 
-    string public fLastName; //father last name
-    string public mLastName; //father last name
+    struct FullName{
+      string name; 
+      string fLastName; //father last name
+      string mLastName; //mother last name
+
+    }
+
+    FullName private fullName;
       bool private genderM; //true will be man and false woman
       uint private birthday; //unix epoch
     uint16 private locality; //locality of birthdate: it is only the code
     uint16 private municipalty; //municipalty of birthdate: it is only the code      
     uint16 private state; //state of birthdate: it is only the code    
     uint16 private country; //country of birthdate: it is only the code  
+    string private curp; // Unique key of population register
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public tokenFather; //null 0x0000000000000000000000000000000000000000
@@ -32,8 +38,8 @@ contract BirthCertificate is OwnerInterface{
          uint dateCreation
   );
 
-  constructor(string memory _name, string memory _fLastName, string memory _mLastName, bool _gender, 
-              uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country,
+  constructor(FullName memory _fullName, bool _gender, 
+              uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
               address _contractEntities, address _digIden) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
     digitalIdentity = _digIden;
@@ -42,16 +48,14 @@ contract BirthCertificate is OwnerInterface{
     EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
     require(contractUsers.getCreator(owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
-    
-    name = _name; 
-    fLastName = _fLastName; 
-    mLastName = _mLastName; 
+    fullName = _fullName;
     genderM = _gender; //true will be man and false woman
     birthday = _birthday;     
     locality = _locality;
     municipalty = _municipality;
     state =_state;
     country = _country;
+    curp = _curp;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;
     tokenFather=address(0);
@@ -83,6 +87,23 @@ contract BirthCertificate is OwnerInterface{
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
+    function getName() public view  ownerOrGovernment returns (string memory){
+      return fullName.name;
+    }
+
+    function getFatherLastName() public view  ownerOrGovernment returns (string memory){
+      return fullName.fLastName;
+    }
+
+    function getMotherLastName() public view  ownerOrGovernment returns (string memory){
+      return fullName.mLastName;
+    }
+
+    function getFullName() public view  ownerOrGovernment returns (string memory){
+      return string.concat(fullName.name," ",fullName.fLastName," ",fullName.mLastName);
+    }
+
+
     function isMale() public view ownerOrGovernment returns (bool){
       return genderM;
     }
@@ -108,5 +129,7 @@ contract BirthCertificate is OwnerInterface{
       return country;
     }
     
-
+    function getCURP() public view ownerOrGovernment returns (string memory){
+      return curp;
+    }
 }
