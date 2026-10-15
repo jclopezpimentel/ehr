@@ -189,7 +189,7 @@ initializer.consultP = async function (req, res){
         resul = utilities.toResult("Error", errNNum, errorControl.errors(errNNum));// it is false when there is no error
     }else{
         //resul = utilities.toResult("false", 0, "Everything is fine");
-        const entityAdd = req.query.entityAdd;
+        const entityAdd = req.query.entitySC;
         const gas = req.query.gas;	
         const sender = req.query.sender;
         const address = req.query.address;

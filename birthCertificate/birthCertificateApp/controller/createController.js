@@ -3,7 +3,7 @@ var utilities = require('./utilities');
 var listFuncInChain = require('./listFunctionsInBlockchain');
 var initializer = {};
 
-async function executeConstructor(gas, from, contractABI, contractByteCodeObj, name, fLastName, mLastName, gender, birthday, state, municipality, locality, country, entities, digitalId) {
+async function executeConstructor(gas, from, contractABI, contractByteCodeObj, fullName, gender, birthday, state, municipality, locality, country, curp, entities, digitalId) {
 	console.log("ExecutingConstructor");
 	var y = "";
 	try {
@@ -21,7 +21,7 @@ async function executeConstructor(gas, from, contractABI, contractByteCodeObj, n
 			const userContract = new web3.eth.Contract(contractABI);
 			console.log("Entró3: " + from);
 			const nonce = await web3.eth.getTransactionCount(from);
-			const contract = await userContract.deploy({ data: contractByteCodeObj, arguments: [name, fLastName, mLastName, gender, birthday, locality, municipality, state, country, entities, digitalId] });
+			const contract = await userContract.deploy({ data: contractByteCodeObj, arguments: [fullName, gender, birthday, locality, municipality, state, country, curp, entities, digitalId] });
 			await contract.send( //gasLimit must be set to 6721975, otherwise it will not work
 				{ from: from, gas: gas, gasPrice: 20000000000, nonce: nonce, gasLimit: 6721975 }).on('receipt', function (receipt) {
 					console.log("Entró4: " + from);					
@@ -64,14 +64,16 @@ async function createBCInSC(obj) {
 	const municipality = obj.body.municipality;
 	const locality = obj.body.locality;
 	const country = obj.body.country;
+	const curp = obj.body.curp;
 	const entities = obj.body.entities;
 	const digitalId = obj.body.digitalId;
+	const fullName = [name, fLastName, mLastName];
 
-	console.log("FunctionName: " + functionName + "\nFrom: " + from + "\nGas: " + gas);
+	console.log("obj: " + JSON.stringify(obj.body));
 	let resul = {};
 	if(functionName === "constructor"){	
 		try {
-			const result = await executeConstructor(gas, from, contractABI, contractByteCodeObj, name, fLastName, mLastName, gender, birthday, state, municipality, locality, country, entities, digitalId);
+			const result = await executeConstructor(gas, from, contractABI, contractByteCodeObj, fullName, gender, birthday, state, municipality, locality, country, curp, entities, digitalId);
 			resul = utilities.toResult("Ok", "0", result);
 			return resul;
 		} catch (error) {
@@ -105,7 +107,8 @@ initializer.createBC = async function (req, res) {
 		const municipality = req.body.municipality;
 		const locality = req.body.locality;
 		const country = req.body.country;
-		const entities = req.body.entities;
+		const curp = req.body.curp;
+		const entities = req.body.entitiesSC;
 		const digitalId = req.body.digitalId;
 		//It is required that all variables contain any value (not empty)
 		const obj = {
@@ -125,6 +128,7 @@ initializer.createBC = async function (req, res) {
 				municipality: municipality,
 				locality: locality,
 				country: country,
+				curp: curp,
 				entities: entities,
 				digitalId: digitalId
 			}

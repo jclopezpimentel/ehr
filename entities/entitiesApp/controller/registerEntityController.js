@@ -82,7 +82,7 @@ initializer.registerEntity = async function(req, res) {
         resul = utilities.toResult("Error", errNNum, errorControl.errors(errNNum));// it is false when there is no error
     }else{
         const gas = req.body.gas;
-        const entityAdd = req.body.entityAdd;    
+        const entityAdd = req.body.entitySC;    
         const address = req.body.address;
         const entityType = req.body.entityType;
         const government = req.body.government;
