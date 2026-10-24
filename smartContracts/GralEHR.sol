@@ -4,7 +4,7 @@ pragma solidity 0.8.23;
 import "./EHR.sol";
 import "./BirthCertificate.sol";
 import "./EntitiesInterface.sol";
-import "./AcademicDegree.sol";
+import "./AcademicsDegree.sol";
 
 contract GralEHR is OwnerInterface{  
     //attributes
@@ -14,6 +14,7 @@ contract GralEHR is OwnerInterface{
    address public owner;
    ContractType public typeContract=ContractType.GralEHR;
    address private entitySC;
+   address private academicDeg;
 
     struct GralEHR_Match{
         address ehr; // address of the EHR contract
@@ -31,7 +32,8 @@ contract GralEHR is OwnerInterface{
     }
 
 
-  constructor(address _entitySC) mustBeGovernment(_entitySC) {
+  constructor(address _entitySC,address _academicDeg) mustBeGovernment(_entitySC) {
+    academicDeg = _academicDeg;
     entitySC = _entitySC;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;
@@ -40,8 +42,9 @@ contract GralEHR is OwnerInterface{
   }
 
 
-    modifier mustBeHealthCP(address _academicDeg){ // must be healthCare Professional  
-      require(academicDeg.degreeIsTypeDegree(msg.sender,AcademicDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
+    modifier mustBeHealthCP(){ // must be healthCare Professional  
+      AcademicsDegree academicDegSC = AcademicsDegree(academicDeg);
+      require(academicDegSC.degreeIsTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
       _;
     }
 
@@ -52,7 +55,7 @@ contract GralEHR is OwnerInterface{
       require(digitalId!= address(0), "Incorrect digital identity address or birthcertificate address");
       require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
       require(curpMatches[_curp].birthCerSC==address(0),"Curp already exists");
-      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender);
+      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicDeg);
       curpMatches[_curp] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender);
     }
 

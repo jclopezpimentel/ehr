@@ -3,6 +3,7 @@ pragma solidity 0.8.23;
 
 import "./DigitalIdentity.sol";
 import "./BirthCertificate.sol";
+import "./AcademicsDegree.sol";
 
 contract EHR is OwnerInterface, DateInterface{  
     //attributes
@@ -15,7 +16,8 @@ contract EHR is OwnerInterface, DateInterface{
     address private entitySC;
    string private curp;
    address private birthCerAdd;
-   
+   address private academicDeg;
+
   event healthCPTransactions(
       address indexed executor,
          uint dateCreation
@@ -33,14 +35,13 @@ contract EHR is OwnerInterface, DateInterface{
     mapping(bytes32 => HealthRecord) private healthRecords;
     //uint private idAch=0;
 
-  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP){    
+  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg){    
     //This line is checking if the contract is called by other contract.
     require(msg.sender.code.length > 0,"It was not called by a contract");
     require(msg.sender==_gralEHR,"Error: incorrect sender");
     BirthCertificate bc = BirthCertificate(_birthCerAdd);
-    
-    //DigitalIdentity digIdentity = DigitalIdentity(bc.digitalIdentity());
     entitySC = bc.entitySC();
+    academicDeg = _academicDeg;
     birthCerAdd = _birthCerAdd;
     owner = bc.owner();
     government = _healthCP;
@@ -51,9 +52,11 @@ contract EHR is OwnerInterface, DateInterface{
     emit healthCPTransactions(msg.sender,dateCreation);
   }
 
+
+
     modifier mustBeHealthCP(){ // must be healthCare Professional  
-      EntitiesInterface contractUsers = EntitiesInterface(entitySC);
-      require(contractUsers.getType(msg.sender)==24,"Incorrect HealthCare Professional user");   
+      AcademicsDegree academicDegSC = AcademicsDegree(academicDeg);
+      require(academicDegSC.degreeIsTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
       _;
     }
 
@@ -77,14 +80,7 @@ contract EHR is OwnerInterface, DateInterface{
         else return false;
     }
 
-
-    modifier ownerGovernmentOrHealthCP(){      
-      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-      require((msg.sender==owner) || (contractUsers.getType(msg.sender)==0) || (msg.sender==healthCP),"Owner or Governments can execute this method");
-      _;
-    }
-
-    function getBirthCertificate() public view ownerGovernmentOrHealthCP returns (address){
+    function getBirthCertificate() public view returns (address){
       return birthCerAdd;
     }
 
