@@ -15,12 +15,9 @@ initializer.searchFunctionAndSmartContract = function(functionName){
         case "getDigIdentityAddEntityP": return ["Found","getDigIdentityAdd","./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
         case "getInfoEntity": return ["Found",["getType", "getDigIdentityAdd", "getCreator"],"./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
         case "linkContract": return ["Found","linkContract","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];        
-        default:            return ["NotFound","Error"];
+        default:            return ["NotFound","Error","Error"];
     }
 
 }
 
 module.exports = initializer;
-
-//global.contractABIPath = "./smartContract/Entities.abi";
-//global.contractByteCodeSource = "./smartContract/Entities.bytecode";

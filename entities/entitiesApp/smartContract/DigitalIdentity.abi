@@ -108,9 +108,9 @@
 		"name": "getNameContract",
 		"outputs": [
 			{
-				"internalType": "string",
+				"internalType": "int256",
 				"name": "",
-				"type": "string"
+				"type": "int256"
 			}
 		],
 		"stateMutability": "view",
@@ -173,9 +173,9 @@
 		"name": "typeContract",
 		"outputs": [
 			{
-				"internalType": "string",
+				"internalType": "int256",
 				"name": "",
-				"type": "string"
+				"type": "int256"
 			}
 		],
 		"stateMutability": "view",

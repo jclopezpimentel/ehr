@@ -54,5 +54,14 @@ initializer.replacer = function(key, value) {
 	}
   }
 
+initializer.toResult = function(result,num,value){ 
+	var resul = { 
+		"Result": result, // it is false when there is no error
+		"Num": num, 
+		"Return": value // it is the return value of the function, when there is no error, or the error message when there is an error
+	};
+	return resul;
+}
+
 
 module.exports = initializer;

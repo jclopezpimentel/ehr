@@ -3,7 +3,7 @@ var utilities = require('./utilities');
 var listFuncInChain = require('./listFunctionsInBlockchain');
 var initializer = {};
 
-async function executeLinkContractInSC(contractABI, functionName, from, contract, digitalId, gas) {
+async function executeLinkContractInSC(contractABI, functionName, from, newContract, digitalId, gas) {
     let y = "";
     try {
         const { Web3 } = require('web3');
@@ -17,9 +17,9 @@ async function executeLinkContractInSC(contractABI, functionName, from, contract
         console.log("Entró2: ");
         try {
             const web3 = new Web3(Web3.givenProvider || blockchainAddress);
-            const userContract = new web3.eth.Contract(contractABI,contract);                			
-            console.log("Entró3: ");            
-            const contractAnswer = await userContract.methods[functionName](digitalId).send(
+            const userContract = new web3.eth.Contract(contractABI,digitalId);                			
+            console.log("Entró3: fn=" + functionName + " NC= " + newContract);            
+            const contractAnswer = await userContract.methods[functionName](newContract).send(
                 { from: from, gas: gas }
                 ).on('receipt', function(result) {
                     console.log(result);									
@@ -51,10 +51,10 @@ async function linkContractInSC(obj) {
     const functionName          = obj.body.functionName;
     const gas                   = obj.body.gas;
     const from                  = obj.body.from;
-    const contract              = obj.body.contract;
+    const newContract              = obj.body.newContract;
     const digitalId             = obj.body.digitalId;
     try {
-        const result = await executeLinkContractInSC(contractABI, functionName, from, contract, digitalId, gas);
+        const result = await executeLinkContractInSC(contractABI, functionName, from, newContract, digitalId, gas);
         resul = utilities.toResult("Ok", "0", result);
         console.log("Result from SC: " + JSON.stringify(result));
         return resul;
@@ -73,16 +73,16 @@ initializer.linkContract = async function(req, res) {
     console.log("Received: " + JSON.stringify(req.body));
     const funName = req.body.functionName;
     const [found, functionName,contractABIPath,contractByteCodeSource] = listFuncInChain.searchFunctionAndSmartContract(funName);
+    console.log("Function name: " + functionName);
     let resul = {};
     if(found === "NotFound"){
         errNNum = "11";
         resul = utilities.toResult("Error", errNNum, errorControl.errors(errNNum));// it is false when there is no error
     }else{
         const gas = req.body.gas;
-        const from = req.body.from;
-        const contract = req.body.contract;    
+        const owner = req.body.owner;
+        const newContract = req.body.newContract;    
         const digitalId = req.body.digitalId;
-        console.log("Request from: " + government);
         //It is required that all variables contain any value (not empty)
         const obj = {
             body:
@@ -91,8 +91,8 @@ initializer.linkContract = async function(req, res) {
                 contractABIPath: contractABIPath,
                 contractByteCodeSource: contractByteCodeSource,
                 gas: gas,
-                from: from,
-                contract: contract,
+                from: owner,
+                newContract: newContract,
                 digitalId: digitalId
             }
         };
@@ -100,7 +100,6 @@ initializer.linkContract = async function(req, res) {
         if (errNum) {  //				
             resul = utilities.toResult("Error", errNum.toString(), errorControl.errors(errNum));
         } else {
-            console.log("Processing request from: " + government);
             resul = await linkContractInSC(obj);
         }
 

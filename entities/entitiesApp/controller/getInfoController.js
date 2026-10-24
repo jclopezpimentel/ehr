@@ -51,7 +51,7 @@ initializer.getInfo = async function (req, res) {
         errNNum = "11";
         resul = utilities.toResult("Error", errNNum, errorControl.errors(errNNum));// it is false when there is no error
     }else{
-        const entityAdd = req.query.entityAdd;
+        const entitySC = req.query.entitySC;
         const gas = req.query.gas;	
         const sender = req.query.sender;
         const address = req.query.address;
@@ -61,7 +61,7 @@ initializer.getInfo = async function (req, res) {
                 functionNames: functionNames,
                 contractABIPath: contractABIPath,
                 contractByteCodeSource: contractByteCodeSource,
-                contractAdd:entityAdd,
+                contractAdd:entitySC,
                 gas:gas,
                 sender:sender,
                 address:address
