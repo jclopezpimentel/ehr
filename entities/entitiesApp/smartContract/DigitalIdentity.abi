@@ -86,12 +86,12 @@
 				"type": "address"
 			}
 		],
-		"name": "getCreatorOfContract",
+		"name": "getContractType",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "enum OwnerInterface.ContractType",
 				"name": "",
-				"type": "address"
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -105,12 +105,12 @@
 				"type": "address"
 			}
 		],
-		"name": "getNameContract",
+		"name": "getCreatorOfContract",
 		"outputs": [
 			{
-				"internalType": "int256",
+				"internalType": "address",
 				"name": "",
-				"type": "int256"
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -173,9 +173,9 @@
 		"name": "typeContract",
 		"outputs": [
 			{
-				"internalType": "int256",
+				"internalType": "enum OwnerInterface.ContractType",
 				"name": "",
-				"type": "int256"
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",

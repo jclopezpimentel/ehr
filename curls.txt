@@ -1,0 +1,67 @@
+curl -X POST http://localhost:5500/createEntity \
+  -H "Content-Type: application/json" \
+  -d '{"functionName": "createGover", "gas": 3000000, "from": "0x2CFcBB9Cf2910fBa7E7E7a8092aa1a40BC5BA341"}'
+
+
+//ejemplo resultado
+{"Result":"Ok","Num":"0","Return":{"transactionHash":"0xa58ffbe58fb2e63c8b8fe5a336268efd78838887e8140530e5e7cc1517fbc7bf",
+"contractAddress":"0x52771348fff6e3c742e6b4b4a96eb1cf26282b48",
+"gasUsed":"2840547","blockNumber":"25","blockHash":"0x336cace9f1ace12357d350b561fffdeab76c48424e38bfd81cfd75c34ead2a2c","from":"0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341","fromorigin":"0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341"}}
+
+
+curl -X GET "http://localhost:5500/consultEntity?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&publicMethod=owner&requester=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341"
+
+
+curl -X GET "http://localhost:5500/consultEntity?entitySC=0x009f298d6d1f9b88564a5fa11c50cae0ec365070&publicMethod=government&requester=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341"
+
+
+curl -X GET "http://localhost:5500/consultEntity?entitySC=0x009f298d6d1f9b88564a5fa11c50cae0ec365070&publicMethod=dateCreation&requester=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341"
+
+
+curl -X GET "http://localhost:5500/consultEntity?entitySC=0x009f298d6d1f9b88564a5fa11c50cae0ec365070&publicMethod=dateLastUpdate&requester=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341"
+
+
+curl -X GET "http://localhost:5500/consultEntity?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&publicMethod=typeContrac&requester=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341"
+
+
+curl -X POST http://localhost:5500/registerEntity \
+  -H "Content-Type: application/json" \
+  -d '{"functionName": "registerEntity", "gas": 3000000, "government": "0x2CFcBB9Cf2910fBa7E7E7a8092aa1a40BC5BA341", "entitySC":"0x52771348fff6e3c742e6b4b4a96eb1cf26282b48","address":"0xa6ba79E509d7adb4594852E50D3e48BDcA15D07e", "entityType":10}'
+
+
+curl -X GET "http://localhost:5500/consultEntityP?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&publicMethod=getType&sender=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341&gas=3000000&address=0xa6ba79E509d7adb4594852E50D3e48BDcA15D07e"
+
+curl -X GET "http://localhost:5500/consultEntityP?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&publicMethod=getCreator&sender=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341&gas=3000000&address=0xa6ba79E509d7adb4594852E50D3e48BDcA15D07e"
+
+curl -X GET "http://localhost:5500/consultEntityP?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&publicMethod=entityExists&sender=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341&gas=3000000&address=0xa6ba79E509d7adb4594852E50D3e48BDcA15D07e"
+
+curl -X GET "http://localhost:5500/consultEntityP?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&publicMethod=getDigIdentityAdd&sender=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341&gas=3000000&address=0xa6ba79E509d7adb4594852E50D3e48BDcA15D07e"
+
+
+curl -X GET "http://localhost:5500/getInfoEntity?entitySC=0x52771348fff6e3c742e6b4b4a96eb1cf26282b48&sender=0X2CFCBB9CF2910FBA7E7E7A8092AA1A40BC5BA341&gas=3000000&address=0xa6ba79E509d7adb4594852E50D3e48BDcA15D07e"
+
+
+{"Result":"Ok","Num":"0","Return":{"getType":{"Result":"Ok","Num":"0","Return":{"type":"bigint","value":"10"}},"getDigIdentityAdd":{"Result":"Ok","Num":"0","Return":"0x8ECE38e9740c73021bD46DDe7c9226778AeDF1A9"},"getCreator":{"Result":"Ok","Num":"0","Return":"0x2CFcBB9Cf2910fBa7E7E7a8092aa1a40BC5BA341"}}}
+
+
+
+curl -X POST http://localhost:5500/linkContract \
+  -H "Content-Type: application/json" \
+  -d '{"functionName": "linkContract", "gas": 3000000, "owner": "0x32d680Aa90D45B677BBa0fFE9Af3d3578dcB4a83", "digitalId":"0xc1340911142Ac726ad2602885625120118BF59C9", "newContract":"0x2f45c20f8c7223e5737ae00239ed72d36ed83adc"}'
+
+
+
+
+{"Result":"Ok","Num":"0","Return":{"transactionHash":"0xfa430e774e0aaf5c465194a27d6c36c303fd8b064632aeb5a581ae559e2c0430","transactionIndex":{"type":"bigint","value":"0"},"blockNumber":{"type":"bigint","value":"67"},"blockHash":"0xa0dedae1e5b0f066d30da2ce0ec8135edf90dc1afa7b40975568a6298d42e57b","from":"0x32d680aa90d45b677bba0ffe9af3d3578dcb4a83","to":"0xc1340911142ac726ad2602885625120118bf59c9","cumulativeGasUsed":{"type":"bigint","value":"165137"},"gasUsed":{"type":"bigint","value":"165137"},"logs":[],"logsBloom":"0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000","status":{"type":"bigint","value":"1"},"effectiveGasPrice":{"type":"bigint","value":"2500543656"},"type":{"type":"bigint","value":"2"}}}
+
+
+curl -X POST http://localhost:5500/createBC \
+  -H "Content-Type: application/json" \
+  -d '{"functionName": "create", "gas": 40000000000, "government": "0x2CFcBB9Cf2910fBa7E7E7a8092aa1a40BC5BA341", "name": "John", "fLastName": "Doe", "mLastName": "Smith", "gender": "true", "birthday": 284688000, "state": 1, "municipality": 1, "locality": 1, "country": 52, "curp":"HOPJ800110HCSPMN08", "entitiesSC": "0xb855ff34F70e5294f5eCd6aB6a2F9DE0E4236693", "digitalId": "0xc1340911142Ac726ad2602885625120118BF59C9"}'
+
+
+{"Result":"Ok","Num":"0","Return":{"transactionHash":"0x6e646ee951473ee79ad5a7e161849bca821daaef3a018310cabc0840b02fbc1c","transactionIndex":{"type":"bigint","value":"0"},"blockNumber":{"type":"bigint","value":"66"},"blockHash":"0xfdaa069fb337badc27e2a101219866e4057165c3a8d5d3fa6a6a0618860e5f0e","from":"0x2cfcbb9cf2910fba7e7e7a8092aa1a40bc5ba341","cumulativeGasUsed":{"type":"bigint","value":"985001"},"gasUsed":{"type":"bigint","value":"985001"},"contractAddress":"0x2f45c20f8c7223e5737ae00239ed72d36ed83adc","logs":[{"address":"0x2f45c20f8c7223e5737ae00239ed72d36ed83adc","blockHash":"0xfdaa069fb337badc27e2a101219866e4057165c3a8d5d3fa6a6a0618860e5f0e","blockNumber":{"type":"bigint","value":"66"},"data":"0x000000000000000000000000000000000000000000000000000000006ace89b5","logIndex":{"type":"bigint","value":"0"},"removed":false,"topics":["0xf1904d46b1f248f2bd67847377086681e6f5d0b79b1e6d8de2719354f75556fe","0x0000000000000000000000002cfcbb9cf2910fba7e7e7a8092aa1a40bc5ba341"],"transactionHash":"0x6e646ee951473ee79ad5a7e161849bca821daaef3a018310cabc0840b02fbc1c","transactionIndex":{"type":"bigint","value":"0"}}],"logsBloom":"0x00000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000001000001000000000000000000000000000000000000000000000000200020000000000000000000000000000000000","status":{"type":"bigint","value":"1"},"effectiveGasPrice":{"type":"bigint","value":"20000000000"},"type":{"type":"bigint","value":"0"},"events":{"governmentTransactions":{"address":"0x2f45c20f8c7223e5737ae00239ed72d36ed83adc","blockHash":"0xfdaa069fb337badc27e2a101219866e4057165c3a8d5d3fa6a6a0618860e5f0e","blockNumber":{"type":"bigint","value":"66"},"data":"0x000000000000000000000000000000000000000000000000000000006ace89b5","logIndex":{"type":"bigint","value":"0"},"removed":false,"topics":["0xf1904d46b1f248f2bd67847377086681e6f5d0b79b1e6d8de2719354f75556fe","0x0000000000000000000000002cfcbb9cf2910fba7e7e7a8092aa1a40bc5ba341"],"transactionHash":"0x6e646ee951473ee79ad5a7e161849bca821daaef3a018310cabc0840b02fbc1c","transactionIndex":{"type":"bigint","value":"0"},"returnValues":{"0":"0x2CFcBB9Cf2910fBa7E7E7a8092aa1a40BC5BA341","1":{"type":"bigint","value":"1791920565"},"__length__":2,"executor":"0x2CFcBB9Cf2910fBa7E7E7a8092aa1a40BC5BA341","dateCreation":{"type":"bigint","value":"1791920565"}},"event":"governmentTransactions","signature":"0xf1904d46b1f248f2bd67847377086681e6f5d0b79b1e6d8de2719354f75556fe","raw":{"data":"0x000000000000000000000000000000000000000000000000000000006ace89b5","topics":["0xf1904d46b1f248f2bd67847377086681e6f5d0b79b1e6d8de2719354f75556fe","0x0000000000000000000000002cfcbb9cf2910fba7e7e7a8092aa1a40bc5ba341"]}}}}}
+
+
+
+
