@@ -4,29 +4,30 @@ pragma solidity ^0.8.23;
 import "./DigitalIdentity.sol";
 
 contract Entities is OwnerInterface, EntitiesInterface, DateInterface{ 
+    
     struct Entity {
         address creator; //who create the entity
         address dIdentity; //address of the digital identity
-        int entityType; //int (0 = Government, 1 = Admin, 10 = humans, others = regular entities)
+        EntityType entityType; 
     }   
     mapping(address => Entity) private entities;
 
     address public owner;
     address public government;
-    int public typeContract = 1;
+    ContractType public typeContract = ContractType.Entities;
        uint public dateCreation;
        uint public dateLastUpdate;
 
     // Modifier to ensure the government and/or admin can execute some actions
-    modifier onlyGovernmentOrAdmin(int _entityType) {
-        if(_entityType==0){
+    modifier onlyGovernmentOrAdmin(EntityType _entityType) {
+        if(_entityType==EntityType.Government){
             require(
-                entities[msg.sender].entityType == 0,
+                entities[msg.sender].entityType == EntityType.Government,
                 "Only government can perform this action."
             );            
         }else{
             require(
-                entities[msg.sender].entityType == 0 || entities[msg.sender].entityType == 1,
+                entities[msg.sender].entityType == EntityType.Government || entities[msg.sender].entityType == EntityType.Admin,
                 "Only government or admin can perform this action."
             );
         }
@@ -44,22 +45,21 @@ contract Entities is OwnerInterface, EntitiesInterface, DateInterface{
         dateLastUpdate = dateCreation;        
         government = msg.sender; // The government deploy the contract
         owner = government; //The government is also the owner
-        entities[government] = Entity(government,address(0), 0); 
+        entities[government] = Entity(government,address(0), EntityType.Government); 
     }
 
     // Function to add new entities
     function registerEntity(
         address _entityAddress,
-        int _entityType
+        EntityType _entityType
     ) public onlyGovernmentOrAdmin(_entityType) {
         require(entities[_entityAddress].creator==address(0),"Entity already exists");
-        require(_entityType >= 0, "EntityType must be a non-negative integer."); // Validation for entityType
         dateLastUpdate = block.timestamp;        
         DigitalIdentity didentityAdd = new DigitalIdentity(_entityAddress,address(this),msg.sender);
         entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), _entityType);        
     }
 
-    function getType(address _address) public view entityExistsIn(_address) returns (int) {
+    function getType(address _address) public view entityExistsIn(_address) returns (EntityType) {
         return entities[_address].entityType;
     }
 

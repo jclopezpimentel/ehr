@@ -15,7 +15,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         
     //attributes
         address public owner;
-         int public typeContract=2;
+        ContractType public typeContract=ContractType.DigitalIdentity;
         address public government;
         address public addOfEntities;
            uint public dateCreation;
@@ -24,7 +24,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
 
         struct LinkedContract{
                 address contractAdd; //contract to be added
-                int typeContract; 
+                ContractType typeContract; 
                 address creator; //Address creator of the token, usually could be the government
                 bool gcert; //true if the linked token is really a verified government
                             //false if not
@@ -39,7 +39,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         require(msg.sender.code.length > 0,"It was not called by a contract");
         require(msg.sender==_contractOfEntities,"Error: incorrect sender");        
         EntitiesInterface contractEntities = EntitiesInterface(_contractOfEntities);
-        require(contractEntities.getType(gover)==0,INCORRECT_GOVERNMENT);
+        require(contractEntities.getType(gover)==EntitiesInterface.EntityType.Government,INCORRECT_GOVERNMENT);
         dateCreation = block.timestamp;
         dateLastUpdate = dateCreation;        
         addOfEntities = _contractOfEntities;
@@ -56,7 +56,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         EntitiesInterface contractEntities = EntitiesInterface(addOfEntities);
         bool gcert=false;
         if(contractEntities.entityExists(contractFrom.government())){
-            gcert = (contractEntities.getType(contractFrom.government())==0?true:false);
+            gcert = (contractEntities.getType(contractFrom.government())==EntitiesInterface.EntityType.Government?true:false);
         }        
         linkedContracts[contractAdd] = LinkedContract(contractAdd,contractFrom.typeContract(),
             contractFrom.government(),gcert,true);
@@ -68,7 +68,7 @@ contract DigitalIdentity is OwnerInterface, DateInterface{
         return (addressesContracts.length);
     }
 
-    function getNameContract(address _contractAdd) public view returns (int) {
+    function getContractType(address _contractAdd) public view returns (ContractType) {
         LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.typeContract);
     }
