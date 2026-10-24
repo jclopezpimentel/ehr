@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.23;
 
-//importing the interface
-//import "./OwnerInterface.sol";
-//import "./EntitiesInterface.sol";
+
 import "./DigitalIdentity.sol";
+import "./EntitiesInterface.sol";
 
 contract BirthCertificate is OwnerInterface{  
     //attributes
@@ -29,9 +28,9 @@ contract BirthCertificate is OwnerInterface{
    address public tokenMother;
    address public government;
    address public owner;
-    int public typeContract=3;
+   ContractType public typeContract=ContractType.BirthCertificate;
     address public digitalIdentity; // This is the digital identity of the user
-   address private addOfEntities;
+   address public entitySC;
    
   event governmentTransactions(
       address indexed executor,
@@ -44,10 +43,10 @@ contract BirthCertificate is OwnerInterface{
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
     digitalIdentity = _digIden;
     owner = dIdentity.owner();
-    addOfEntities = _contractEntities;
-    EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
+    entitySC = _contractEntities;
+    EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
     require(contractUsers.getCreator(owner)!=address(0),"User already exists");
-    require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
+    require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
     fullName = _fullName;
     genderM = _gender; //true will be man and false woman
     birthday = _birthday;     
@@ -65,13 +64,13 @@ contract BirthCertificate is OwnerInterface{
   }
 
     modifier mustBeGovernment(){
-      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
-      require(contractUsers.getType(msg.sender)==0,"Incorrect government user");
+      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
+      require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
       _;
     }
     modifier ownerOrGovernment(){      
-      EntitiesInterface contractUsers = EntitiesInterface(addOfEntities);    
-      require((msg.sender==owner) || (contractUsers.getType(msg.sender)==0),"Owner or Governments can execute this method");
+      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
+      require((msg.sender==owner) || (contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government),"Owner or Governments can execute this method");
       _;
     }
 
@@ -131,5 +130,9 @@ contract BirthCertificate is OwnerInterface{
     
     function getCURP() public view ownerOrGovernment returns (string memory){
       return curp;
+    }
+
+    function verifyCURP(string memory _curp) public  view  returns  (bool){
+      return (keccak256(bytes(curp)) == keccak256(bytes(_curp)));
     }
 }
