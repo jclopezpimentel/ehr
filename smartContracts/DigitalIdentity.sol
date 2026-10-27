@@ -3,9 +3,9 @@ pragma solidity 0.8.23;
 
 import "./OwnerInterface.sol";
 import "./EntitiesInterface.sol";
-import "./DateInterface.sol";
 
-contract DigitalIdentity is OwnerInterface, DateInterface{  
+
+contract DigitalIdentity is OwnerInterface{  
     //errors
         string constant INCORRECT_GOVERNMENT = "V0001";
         string constant INCORRECT_OWNER = "V0002";

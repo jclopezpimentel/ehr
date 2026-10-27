@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 import "./DigitalIdentity.sol";
 
-contract Entities is OwnerInterface, EntitiesInterface, DateInterface{ 
+contract Entities is OwnerInterface, EntitiesInterface{ 
     
     struct Entity {
         address creator; //who create the entity

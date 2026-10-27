@@ -5,7 +5,7 @@ import "./DigitalIdentity.sol";
 import "./BirthCertificate.sol";
 import "./AcademicsDegree.sol";
 
-contract EHR is OwnerInterface, DateInterface{  
+contract EHR is OwnerInterface{  
     //attributes
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
