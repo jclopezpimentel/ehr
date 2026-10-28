@@ -12,7 +12,7 @@ contract GralEHR is OwnerInterface{
       uint public dateLastUpdate=0;
    address public government; 
    address public owner;
-   ContractType public typeContract=ContractType.GralEHR;
+   ContractName public nameContract=ContractName.GralEHR;
    address private entitySC;
    address private academicDeg;
 

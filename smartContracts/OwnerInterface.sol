@@ -2,7 +2,7 @@
 pragma solidity 0.8.23;
 
 interface OwnerInterface {
-    enum ContractType {
+    enum ContractName {
         Entities,        
         DigitalIdentity,
         BirthCertificate,
@@ -12,7 +12,7 @@ interface OwnerInterface {
     }
 
     function owner() external view returns (address);
-    function typeContract() external view returns (ContractType); 
+    function nameContract() external view returns (ContractName); 
     function government() external view returns (address);
     function dateCreation() external view returns (uint);
 }

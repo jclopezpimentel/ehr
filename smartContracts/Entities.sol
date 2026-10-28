@@ -14,7 +14,7 @@ contract Entities is OwnerInterface, EntitiesInterface{
 
     address public owner;
     address public government;
-    ContractType public typeContract = ContractType.Entities;
+    ContractName public namecontract = ContractName.Entities;
        uint public dateCreation;
        uint public dateLastUpdate;
 

@@ -13,7 +13,7 @@ contract AcademicsDegree is OwnerInterface{
       uint public dateLastUpdate=0;
    address public government; 
    address public owner;
-   ContractType public typeContract=ContractType.AcademicsDegree;
+   ContractName public nameContract=ContractName.AcademicsDegree;
   address private entitySC;
 
     struct Diploma{

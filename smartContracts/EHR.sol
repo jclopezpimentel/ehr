@@ -10,7 +10,7 @@ contract EHR is OwnerInterface{
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public owner;
-   ContractType public typeContract=ContractType.EHR;
+   ContractName public nameContract=ContractName.EHR;
     address public government; //healthcare professional who created the EHR
     address private healthCP; //healthcare professional who created the EHR
     address private entitySC;

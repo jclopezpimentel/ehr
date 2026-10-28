@@ -28,7 +28,7 @@ contract BirthCertificate is OwnerInterface{
    address public tokenMother;
    address public government;
    address public owner;
-   ContractType public typeContract=ContractType.BirthCertificate;
+   ContractName public nameContract=ContractName.BirthCertificate;
     address public digitalIdentity; // This is the digital identity of the user
    address public entitySC;
    

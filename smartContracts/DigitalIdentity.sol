@@ -15,7 +15,7 @@ contract DigitalIdentity is OwnerInterface{
         
     //attributes
         address public owner;
-        ContractType public typeContract=ContractType.DigitalIdentity;
+        ContractName public nameContract=ContractName.DigitalIdentity;
         address public government;
         address public addOfEntities;
            uint public dateCreation;
@@ -24,7 +24,7 @@ contract DigitalIdentity is OwnerInterface{
 
         struct LinkedContract{
                 address contractAdd; //contract to be added
-                ContractType typeContract; 
+                ContractName nameContract; 
                 address creator; //Address creator of the token, usually could be the government
                 bool gcert; //true if the linked token is really a verified government
                             //false if not
@@ -58,7 +58,7 @@ contract DigitalIdentity is OwnerInterface{
         if(contractEntities.entityExists(contractFrom.government())){
             gcert = (contractEntities.getType(contractFrom.government())==EntitiesInterface.EntityType.Government?true:false);
         }        
-        linkedContracts[contractAdd] = LinkedContract(contractAdd,contractFrom.typeContract(),
+        linkedContracts[contractAdd] = LinkedContract(contractAdd,contractFrom.nameContract(),
             contractFrom.government(),gcert,true);
         addressesContracts.push(contractAdd);
         dateLastUpdate = block.timestamp;        
@@ -68,9 +68,9 @@ contract DigitalIdentity is OwnerInterface{
         return (addressesContracts.length);
     }
 
-    function getContractType(address _contractAdd) public view returns (ContractType) {
+    function getContractType(address _contractAdd) public view returns (ContractName) {
         LinkedContract memory lToken = linkedContracts[_contractAdd];
-        return (lToken.typeContract);
+        return (lToken.nameContract);
     }
 
     function creatorIsGovernment(address _contractAdd) public view returns (bool) {
