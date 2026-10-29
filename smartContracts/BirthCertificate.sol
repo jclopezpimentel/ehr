@@ -42,13 +42,15 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
               address _contractEntities, address _digIden) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
+    EntitiesInterface contractEntities = EntitiesInterface(_contractEntities);    
+    //It's important to check that a birth certificate corresponds to an Individual entity
+    require(contractEntities.getType(dIdentity.owner())==EntitiesInterface.EntityType.Individual,"Entitiy must be of individual type");
+    require(contractEntities.getCreator(dIdentity.owner())!=address(0),"User already exists");
+    require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");    
+
     digitalIdentity = _digIden;
     owner = dIdentity.owner();
-    entitySC = _contractEntities;
-    EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-    require(contractUsers.getCreator(owner)!=address(0),"User already exists");
-    require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
-    FALTA VERIFICAR QUE CUANDO SE CREE EL ACTA DE NACIMIENTO SEA DE TIPO INDIVIDUAL
+    entitySC = _contractEntities;    
     fullName = _fullName;
     genderM = _gender; //true will be man and false woman
     birthday = _birthday;     
