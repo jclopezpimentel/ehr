@@ -47,6 +47,7 @@ contract DigitalIdentity is OwnerInterface{
         owner = _owner;
     }
 
+    //With this function an entity might link other contracts into its digital identity as long as the entity is the owner of such contract
     function linkContract(address contractAdd) public {
         require(msg.sender==owner,INCORRECT_OWNER);
         OwnerInterface contractFrom = OwnerInterface(contractAdd);
@@ -64,6 +65,7 @@ contract DigitalIdentity is OwnerInterface{
         dateLastUpdate = block.timestamp;        
     }
 
+    //this returns the number of linked contracts
     function numberOfLinkedContracts() public view returns (uint) {        
         return (addressesContracts.length);
     }

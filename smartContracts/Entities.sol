@@ -43,18 +43,20 @@ contract Entities is OwnerInterface, EntitiesInterface{
     constructor() {        
         dateCreation = block.timestamp;
         dateLastUpdate = dateCreation;        
-        government = msg.sender; // The government deploy the contract
+        government = msg.sender; // A critical sender becomes the root government
         owner = government; //The government is also the owner
         entities[government] = Entity(government,address(0), EntityType.Government); 
     }
 
-    // Function to add new entities
+    // Function to register new entities
     function registerEntity(
         address _entityAddress,
         EntityType _entityType
     ) public onlyGovernmentOrAdmin(_entityType) {
         require(entities[_entityAddress].creator==address(0),"Entity already exists");
-        dateLastUpdate = block.timestamp;        
+        dateLastUpdate = block.timestamp;  
+
+        //A registration of an entity includes the creation of its DigitalIDentity
         DigitalIdentity didentityAdd = new DigitalIdentity(_entityAddress,address(this),msg.sender);
         entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), _entityType);        
     }

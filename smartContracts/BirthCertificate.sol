@@ -5,7 +5,7 @@ pragma solidity 0.8.23;
 import "./DigitalIdentity.sol";
 import "./EntitiesInterface.sol";
 
-contract BirthCertificate is OwnerInterface{  
+contract BirthCertificate is OwnerInterface{  //This is a birth certificate contract
     //attributes
     struct FullName{
       string name; 
@@ -21,7 +21,7 @@ contract BirthCertificate is OwnerInterface{
     uint16 private municipalty; //municipalty of birthdate: it is only the code      
     uint16 private state; //state of birthdate: it is only the code    
     uint16 private country; //country of birthdate: it is only the code  
-    string private curp; // Unique key of population register
+    string private curp; // Unique key of population register used in Mexico
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public tokenFather; //null 0x0000000000000000000000000000000000000000
@@ -37,6 +37,7 @@ contract BirthCertificate is OwnerInterface{
          uint dateCreation
   );
 
+  //To create an individual birth certificate is required to pass its personal data, the general contractEntity and the digitalIdentity
   constructor(FullName memory _fullName, bool _gender, 
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
               address _contractEntities, address _digIden) {

@@ -5,6 +5,7 @@ import "./DigitalIdentity.sol";
 import "./BirthCertificate.sol";
 import "./AcademicsDegree.sol";
 
+//Each entity can have an only one EHR
 contract EHR is OwnerInterface{  
     //attributes
       uint public dateCreation=0; // it contains the date the contract was created
@@ -61,7 +62,7 @@ contract EHR is OwnerInterface{
     }
 
     /**
-     * @notice It adds a health record within the smart contract EHR
+     * @notice It adds health records within the smart contract EHR
      * @dev Requires that the health record does not already exist. Reverts if idH is taken.
      * @param idH Unique identifier in hash format
      * @param titleH The title of the health record in hash format

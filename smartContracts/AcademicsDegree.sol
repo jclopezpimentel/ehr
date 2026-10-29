@@ -7,8 +7,9 @@ import "./EntitiesInterface.sol";
 
 
 contract AcademicsDegree is OwnerInterface{  
+  //This contract stores academic credentials and the validation of professional qualifications
   enum Degree{Undergraduate, Postgraduate, Master, Doctorate}
-  enum TypeDegree{Nursing, Medicine, Other}
+  enum TypeDegree{Nursing, Medicine, Engineering, Other}
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public government; 
