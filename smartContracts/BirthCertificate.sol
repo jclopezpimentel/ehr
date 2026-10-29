@@ -48,6 +48,7 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
     EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
     require(contractUsers.getCreator(owner)!=address(0),"User already exists");
     require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+    FALTA VERIFICAR QUE CUANDO SE CREE EL ACTA DE NACIMIENTO SEA DE TIPO INDIVIDUAL
     fullName = _fullName;
     genderM = _gender; //true will be man and false woman
     birthday = _birthday;     

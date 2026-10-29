@@ -70,7 +70,7 @@ contract DigitalIdentity is OwnerInterface{
         return (addressesContracts.length);
     }
 
-    function getContractType(address _contractAdd) public view returns (ContractName) {
+    function getContractName(address _contractAdd) public view returns (ContractName) {
         LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.nameContract);
     }
