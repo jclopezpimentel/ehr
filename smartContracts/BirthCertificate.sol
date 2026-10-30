@@ -40,9 +40,9 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
   //To create an individual birth certificate is required to pass its personal data, the general contractEntity and the digitalIdentity
   constructor(FullName memory _fullName, bool _gender, 
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
-              address _contractEntities, address _digIden) {
+              address _entitySC, address _digIden) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
-    EntitiesInterface contractEntities = EntitiesInterface(_contractEntities);    
+    EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
     //It's important to check that a birth certificate corresponds to an Individual entity
     require(contractEntities.getType(dIdentity.owner())==EntitiesInterface.EntityType.Individual,"Entitiy must be of individual type");
     require(contractEntities.getCreator(dIdentity.owner())!=address(0),"User already exists");
@@ -50,7 +50,7 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
 
     digitalIdentity = _digIden;
     owner = dIdentity.owner();
-    entitySC = _contractEntities;    
+    entitySC = _entitySC;    
     fullName = _fullName;
     genderM = _gender; //true will be man and false woman
     birthday = _birthday;     

@@ -8,6 +8,7 @@ contract Entities is OwnerInterface, EntitiesInterface{
     struct Entity {
         address creator; //who create the entity
         address dIdentity; //address of the digital identity
+        bool active; //pinpoints if this entity is active or no
         EntityType entityType; 
     }   
     mapping(address => Entity) private entities;
@@ -19,18 +20,11 @@ contract Entities is OwnerInterface, EntitiesInterface{
        uint public dateLastUpdate;
 
     // Modifier to ensure the government and/or admin can execute some actions
-    modifier onlyGovernmentOrAdmin(EntityType _entityType) {
-        if(_entityType==EntityType.Government){
-            require(
-                entities[msg.sender].entityType == EntityType.Government,
-                "Only government can perform this action."
-            );            
-        }else{
-            require(
-                entities[msg.sender].entityType == EntityType.Government || entities[msg.sender].entityType == EntityType.Admin,
+    modifier onlyActiveGovernmentOrAdmin() {
+        require(entities[msg.sender].entityType == EntityType.Government || entities[msg.sender].entityType == EntityType.Admin,
                 "Only government or admin can perform this action."
             );
-        }
+        require(entities[msg.sender].active,"Only ACTIVE government or admin can perform this action.");
         _;
     }
 
@@ -45,20 +39,20 @@ contract Entities is OwnerInterface, EntitiesInterface{
         dateLastUpdate = dateCreation;        
         government = msg.sender; // A critical sender becomes the root government
         owner = government; //The government is also the owner
-        entities[government] = Entity(government,address(0), EntityType.Government); 
+        entities[government] = Entity(government,address(0), true, EntityType.Government); 
     }
 
     // Function to register new entities
     function registerEntity(
         address _entityAddress,
         EntityType _entityType
-    ) public onlyGovernmentOrAdmin(_entityType) {
+    ) public onlyActiveGovernmentOrAdmin() {
         require(entities[_entityAddress].creator==address(0),"Entity already exists");
         dateLastUpdate = block.timestamp;  
 
         //A registration of an entity includes the creation of its DigitalIDentity
         DigitalIdentity didentityAdd = new DigitalIdentity(_entityAddress,address(this),msg.sender);
-        entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), _entityType);        
+        entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), true, _entityType);        
     }
 
     function getType(address _address) public view entityExistsIn(_address) returns (EntityType) {
@@ -74,7 +68,12 @@ contract Entities is OwnerInterface, EntitiesInterface{
         return(r);
     }
 
-    function getDigIdentityAdd(address _address) public view returns (address){
+    function getDigIdentityAdd(address _address) public view entityExistsIn(_address) returns (address){
         return (entities[_address].dIdentity);
     }
+
+    function setActiveOrInactiveAdd(address _address, bool _active) public entityExistsIn(_address) onlyActiveGovernmentOrAdmin() {
+        entities[_address].active = _active;
+    }
+
  }
