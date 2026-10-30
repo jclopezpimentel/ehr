@@ -17,7 +17,7 @@ contract DigitalIdentity is OwnerInterface{
         address public owner;
         ContractName public nameContract=ContractName.DigitalIdentity;
         address public government;
-        address public addOfEntities;
+        address public entitySC;
            uint public dateCreation;
            uint public dateLastUpdate;
 
@@ -34,27 +34,32 @@ contract DigitalIdentity is OwnerInterface{
         mapping(address => LinkedContract) private linkedContracts;
         address[] private addressesContracts;
 
-    constructor(address _owner, address _contractOfEntities, address gover) { 
+
+    constructor(address _owner, address _entitySC, address gover) { 
         //This line is checking if the contract is called by other contract.   
         require(msg.sender.code.length > 0,"It was not called by a contract");
-        require(msg.sender==_contractOfEntities,"Error: incorrect sender");        
-        EntitiesInterface contractEntities = EntitiesInterface(_contractOfEntities);
+        require(msg.sender==_entitySC,"Error: incorrect sender");        
+        EntitiesInterface contractEntities = EntitiesInterface(_entitySC);
         require(contractEntities.getType(gover)==EntitiesInterface.EntityType.Government,INCORRECT_GOVERNMENT);
         dateCreation = block.timestamp;
         dateLastUpdate = dateCreation;        
-        addOfEntities = _contractOfEntities;
+        entitySC = _entitySC;
         government = gover;        
         owner = _owner;
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == owner, INCORRECT_OWNER);
+        _;
+    }
+
     //With this function an entity might link other contracts into its digital identity as long as the entity is the owner of such contract
-    function linkContract(address contractAdd) public {
-        require(msg.sender==owner,INCORRECT_OWNER);
+    function linkContract(address contractAdd) public onlyOwner {
         OwnerInterface contractFrom = OwnerInterface(contractAdd);
         require(msg.sender==contractFrom.owner(),INCORRECT_OWNER_OF_CONTRACTADDRESS);        
         require(contractFrom.government()!=address(0),NOT_GOVERNMENT);
         require(!linkedContracts[contractAdd].exists,TOKEN_ALREADY_EXIST);
-        EntitiesInterface contractEntities = EntitiesInterface(addOfEntities);
+        EntitiesInterface contractEntities = EntitiesInterface(entitySC);
         bool gcert=false;
         if(contractEntities.entityExists(contractFrom.government())){
             gcert = (contractEntities.getType(contractFrom.government())==EntitiesInterface.EntityType.Government?true:false);

@@ -75,5 +75,8 @@ contract Entities is OwnerInterface, EntitiesInterface{
     function setActiveOrInactiveAdd(address _address, bool _active) public entityExistsIn(_address) onlyActiveGovernmentOrAdmin() {
         entities[_address].active = _active;
     }
+    function isActive(address _address) public view entityExistsIn(_address) returns (bool){
+        return (entities[_address].active);
+    }
 
  }

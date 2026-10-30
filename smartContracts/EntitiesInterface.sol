@@ -13,4 +13,5 @@ interface EntitiesInterface {
         function getDigIdentityAdd(address _address) external view returns (address);//get the digital identity address of a particular entity (address)
         function entityExists(address _address) external view returns (bool);//get true when a particular identity address is already added
         function setActiveOrInactiveAdd(address _address, bool _active) external; //set if an entity will be active or inactive
-}    
+        function isActive(address _address) external view returns (bool);//get true when a particular identity address is active
+}

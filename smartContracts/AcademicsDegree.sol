@@ -36,6 +36,7 @@ contract AcademicsDegree is OwnerInterface{
     modifier mustBeGovernment(address _entitySC){
       EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
       require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
       _;
     }
 

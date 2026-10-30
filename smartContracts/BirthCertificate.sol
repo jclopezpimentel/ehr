@@ -37,16 +37,21 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
          uint dateCreation
   );
 
+    modifier mustBeGovernment(address _entitySC){
+      EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
+      _;
+    }
   //To create an individual birth certificate is required to pass its personal data, the general contractEntity and the digitalIdentity
   constructor(FullName memory _fullName, bool _gender, 
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
-              address _entitySC, address _digIden) {
+              address _entitySC, address _digIden) mustBeGovernment(_entitySC) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
     EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
     //It's important to check that a birth certificate corresponds to an Individual entity
     require(contractEntities.getType(dIdentity.owner())==EntitiesInterface.EntityType.Individual,"Entitiy must be of individual type");
-    require(contractEntities.getCreator(dIdentity.owner())!=address(0),"User already exists");
-    require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");    
+    require(contractEntities.getCreator(dIdentity.owner())!=address(0),"User already exists");    
 
     digitalIdentity = _digIden;
     owner = dIdentity.owner();
@@ -67,24 +72,20 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
     emit governmentTransactions(msg.sender,dateCreation);
   }
 
-    modifier mustBeGovernment(){
-      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-      require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
-      _;
-    }
+
     modifier ownerOrGovernment(){      
       EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
       require((msg.sender==owner) || (contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government),"Owner or Governments can execute this method");
       _;
     }
 
-    function setFatherAddress(address fAddress) public mustBeGovernment {        
+    function setFatherAddress(address fAddress) public mustBeGovernment(entitySC) {        
         tokenFather = fAddress;
         dateLastUpdate = block.timestamp;
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
-    function setMotherAddress(address mAddress) public mustBeGovernment {        
+    function setMotherAddress(address mAddress) public mustBeGovernment(entitySC) {        
         tokenMother = mAddress;
         dateLastUpdate = block.timestamp;
         emit governmentTransactions(msg.sender,dateCreation);
