@@ -132,6 +132,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "entitySC",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getBirthDay",
 		"outputs": [
 			{
@@ -288,6 +301,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "nameContract",
+		"outputs": [
+			{
+				"internalType": "enum OwnerInterface.ContractName",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "owner",
 		"outputs": [
 			{
@@ -352,13 +378,19 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "typeContract",
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_curp",
+				"type": "string"
+			}
+		],
+		"name": "verifyCURP",
 		"outputs": [
 			{
-				"internalType": "int256",
+				"internalType": "bool",
 				"name": "",
-				"type": "int256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",

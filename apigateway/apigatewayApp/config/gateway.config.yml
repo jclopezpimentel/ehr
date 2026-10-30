@@ -45,7 +45,22 @@ apiEndpoints:
 #LinkContract
   didentitylinkContract:
     host:  localhost
-    paths: '/linkContract'    
+    paths: '/linkContract'
+
+  #ConsultDI (public attributes of DigitalIdentity)
+  didentityConsult:
+    host:  localhost
+    paths: '/consultDI'
+
+  #ConsultDIP (methods that receive a linked contract address)
+  didentityConsultP:
+    host:  localhost
+    paths: '/consultDIP'
+
+  #GetInfoDI
+  didentityGetInfo:
+    host:  localhost
+    paths: '/getInfoDI'
 
 
   #Consult token name 
@@ -114,7 +129,40 @@ apiEndpoints:
 
   birthcertificateCreate:
     host:  localhost
-    paths: '/createBC' 
+    paths: '/createBC'
+
+# EHRChain Endpoints (GralEHR and EHR smart contracts)
+  ehrchainProof:
+    host:  localhost
+    paths: '/proofEHRChain'
+
+  ehrchainCreateGralEHR:
+    host:  localhost
+    paths: '/createGralEHR'
+
+  ehrchainCreateEHR:
+    host:  localhost
+    paths: '/createEHR'
+
+  ehrchainConsultGralEHR:
+    host:  localhost
+    paths: '/consultGralEHR'
+
+  ehrchainConsultGralEHRP:
+    host:  localhost
+    paths: '/consultGralEHRP'
+
+  ehrchainAddEHR:
+    host:  localhost
+    paths: '/addEHR'
+
+  ehrchainCheckEHR:
+    host:  localhost
+    paths: '/checkEHR'
+
+  ehrchainConsultEHR:
+    host:  localhost
+    paths: '/consultEHR'
 
 
 #  birthcertificateSetAddress:
@@ -202,6 +250,9 @@ serviceEndpoints:
   birthcertificate:
     url: 'http://172.18.1.5:5502'
 
+  ehrchain:
+    url: 'http://172.18.1.6:5503'
+
 policies:
   - basic-auth
   - cors
@@ -233,6 +284,9 @@ pipelines:
       - entitiesConsultP
       - entitiesGetInfo
       - didentitylinkContract
+      - didentityConsult
+      - didentityConsultP
+      - didentityGetInfo
 
 #      - entitiesProof
 #      - entitiesProofB
@@ -258,7 +312,23 @@ pipelines:
 #    # - key-auth:
       - proxy:
           - action:
-              serviceEndpoint: birthcertificate 
+              serviceEndpoint: birthcertificate
+              changeOrigin: true
+
+  ehrchainPipeline:
+    apiEndpoints:
+      - ehrchainProof
+      - ehrchainCreateGralEHR
+      - ehrchainCreateEHR
+      - ehrchainConsultGralEHR
+      - ehrchainConsultGralEHRP
+      - ehrchainAddEHR
+      - ehrchainCheckEHR
+      - ehrchainConsultEHR
+    policies:
+      - proxy:
+          - action:
+              serviceEndpoint: ehrchain
               changeOrigin: true
 
 #  didentityPipeline:

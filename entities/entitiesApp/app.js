@@ -30,7 +30,10 @@ var consultP = require('./routes/consultP');
 var registerEntity = require('./routes/registerEntity');
 var getInfo = require('./routes/getInfo');
 //Digital identity services
-var linkContract = require('./routes/linkContract'); 
+var linkContract = require('./routes/linkContract');
+var consultDI = require('./routes/consultDI');
+var consultDIP = require('./routes/consultDIP');
+var getInfoDI = require('./routes/getInfoDI');
 
 
 
@@ -44,6 +47,9 @@ app.use('/consultEntityP', consultP);
 app.use('/getInfoEntity', getInfo);
 //Digital identity services
 app.use('/linkContract', linkContract);
+app.use('/consultDI', consultDI);
+app.use('/consultDIP', consultDIP);
+app.use('/getInfoDI', getInfoDI);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -121,6 +121,19 @@
 	},
 	{
 		"inputs": [],
+		"name": "nameContract",
+		"outputs": [
+			{
+				"internalType": "enum OwnerInterface.ContractName",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "owner",
 		"outputs": [
 			{
@@ -148,19 +161,6 @@
 		"name": "registerEntity",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "typeContract",
-		"outputs": [
-			{
-				"internalType": "enum OwnerInterface.ContractType",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	}
 ]

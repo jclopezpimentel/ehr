@@ -210,5 +210,7 @@ initializer.consultNotParams = async function (req, res){
 	res.send(resul);
 }
 
+// Reused by consultDIController (same call, different contract)
+initializer.callIdenSC = callIdenSC;
 
 module.exports = initializer;

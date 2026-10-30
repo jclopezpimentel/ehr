@@ -227,4 +227,7 @@ initializer.executeConsult = async function (method, contractAdd, contractABI, g
     return resul;
 }
 
+// Reused by consultDIPController (same call, different contract)
+initializer.callPSC = callPSC;
+
 module.exports = initializer;

@@ -18,3 +18,5 @@ EHR_simulator/programOk/ehr/*.class
 apigateway/apigatewayApp/node_modules/
 entities/entitiesApp/node_modules/
 birthCertificate/birthCertificateApp/node_modules/
+
+ehrChain/ehrChainApp/node_modules/

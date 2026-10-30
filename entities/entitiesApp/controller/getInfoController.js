@@ -29,7 +29,7 @@ async function callingGetInfo(req) {
             result[method] = response;
             if(response.Result === "Error"){
                 console.log(`Error calling ${method}: while processing the request`);
-                result[method] = `Error: ${error.message}`;
+                result[method] = response; // was `Error: ${error.message}` -> ReferenceError, error is not defined here
                 hayError = true;
                 break; // Exit the loop on first error
             }
