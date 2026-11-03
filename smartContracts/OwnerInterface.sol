@@ -3,6 +3,7 @@ pragma solidity 0.8.23;
 
 //Within the ecosystem this interface is the base of all smart contracts
 interface OwnerInterface {
+    
     //Each smart contract name in the ecosystem must be included within this enum
     enum ContractName {
         Entities,        

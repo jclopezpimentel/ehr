@@ -60,7 +60,7 @@
 			},
 			{
 				"internalType": "address",
-				"name": "_contractEntities",
+				"name": "_entitySC",
 				"type": "address"
 			},
 			{
