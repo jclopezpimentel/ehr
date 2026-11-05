@@ -92,6 +92,7 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
+
     function getName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.name;
     }

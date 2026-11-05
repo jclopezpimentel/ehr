@@ -14,6 +14,7 @@ contract DigitalIdentity is OwnerInterface{
         string constant NOT_GOVERNMENT = "V0005";
         
     //attributes
+          bool private active;
         address public owner;
         ContractName public nameContract=ContractName.DigitalIdentity;
         address public government;
@@ -46,15 +47,33 @@ contract DigitalIdentity is OwnerInterface{
         entitySC = _entitySC;
         government = gover;        
         owner = _owner;
+        active = true;
     }
 
-    modifier onlyOwner() {
+    modifier onlyAliveOwner() {
         require(msg.sender == owner, INCORRECT_OWNER);
+        require(active, "Owner must be alive");
         _;
     }
 
+    modifier mustBeGovernment(address _entitySC){
+      EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
+      _;
+    }
+
+    function setNotActive() public mustBeGovernment(entitySC) {        
+        active = false;        
+    }
+
+    function isActive() public view  returns (bool){
+      return active;
+    }
+
+
     //With this function an entity might link other contracts into its digital identity as long as the entity is the owner of such contract
-    function linkContract(address contractAdd) public onlyOwner {
+    function linkContract(address contractAdd) public onlyAliveOwner {
         OwnerInterface contractFrom = OwnerInterface(contractAdd);
         require(msg.sender==contractFrom.owner(),INCORRECT_OWNER_OF_CONTRACTADDRESS);        
         require(contractFrom.government()!=address(0),NOT_GOVERNMENT);

@@ -60,6 +60,7 @@ contract AcademicsDegree is OwnerInterface{
      public onlyActiveGovernmentOrAdmin(entitySC) {
       BirthCertificate birthCer = BirthCertificate(_BirthCertificate); 
       require(birthCer.owner()==_owner,"Invalid birthcertificate addresss or owner address");
+      //require(birthCer.isAlive(),"Requiere that the birthcertificate is alive ");
       require(!diploma[idDegree].exists, "idDegree already exists");      
       diploma[idDegree] = Diploma(idDegree,_owner,_BirthCertificate,title,date,degree,typeDegree,details,true,true);
       diplomasByOwner[_owner].push(idDegree);
