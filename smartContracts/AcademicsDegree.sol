@@ -26,6 +26,7 @@ contract AcademicsDegree is OwnerInterface{
         Degree degree;
         TypeDegree typeDegree; 
         string details; //additional details of the degree
+        bool active; //pinpoints if this diploma is active or not
         bool exists; //true is it exists
     }
         
@@ -33,14 +34,20 @@ contract AcademicsDegree is OwnerInterface{
     mapping(address => string[]) private diplomasByOwner;
   
   
-    modifier mustBeGovernment(address _entitySC){
+    modifier onlyActiveGovernmentOrAdmin(address _entitySC){
       EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
-      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government || 
+        contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Only government or admin can perform this action.");
       require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
       _;
     }
+    //modifier to validate that diploma exists
+    modifier diplomaExistsIn(string memory _idDegree) {
+        require(diploma[_idDegree].exists, "Diploma does not exist.");
+        _; 
+    }
 
-    constructor(address _entitySC) mustBeGovernment(_entitySC) {
+    constructor(address _entitySC) onlyActiveGovernmentOrAdmin(_entitySC) {
       entitySC = _entitySC;
       dateCreation = block.timestamp;
       dateLastUpdate = dateCreation;
@@ -50,12 +57,20 @@ contract AcademicsDegree is OwnerInterface{
 
 
     function addDiploma(string memory idDegree, string memory title, uint date, Degree degree, TypeDegree typeDegree, string memory details, address _BirthCertificate, address _owner) 
-     public mustBeGovernment(entitySC) {
+     public onlyActiveGovernmentOrAdmin(entitySC) {
       BirthCertificate birthCer = BirthCertificate(_BirthCertificate); 
       require(birthCer.owner()==_owner,"Invalid birthcertificate addresss or owner address");
       require(!diploma[idDegree].exists, "idDegree already exists");      
-      diploma[idDegree] = Diploma(idDegree,_owner,_BirthCertificate,title,date,degree,typeDegree,details,true);
+      diploma[idDegree] = Diploma(idDegree,_owner,_BirthCertificate,title,date,degree,typeDegree,details,true,true);
       diplomasByOwner[_owner].push(idDegree);
+    }
+
+    function setActiveOrInactiveDiploma(string memory _idDegree, bool _active) public diplomaExistsIn(_idDegree) onlyActiveGovernmentOrAdmin(entitySC) {
+        diploma[_idDegree].active = _active;
+    }
+
+    function isActive(string memory _idDegree) public view diplomaExistsIn(_idDegree) returns (bool){
+        return (diploma[_idDegree].active);
     }
 
     function degreeIsTypeDegree(address add, TypeDegree typeDegree) public view returns (bool) {
@@ -67,4 +82,5 @@ contract AcademicsDegree is OwnerInterface{
       }
       return false;    
     }
+
 }

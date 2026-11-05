@@ -73,9 +73,10 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
   }
 
 
-    modifier ownerOrGovernment(){      
-      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-      require((msg.sender==owner) || (contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government),"Owner or Governments can execute this method");
+    modifier ownerGovernmentOrAdmin(){      
+      EntitiesInterface contractEntities = EntitiesInterface(entitySC);    
+      require((msg.sender==owner) || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government)
+      || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin),"Owner, Governments or Admins can execute this method");
       _;
     }
 
@@ -91,49 +92,49 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
-    function getName() public view  ownerOrGovernment returns (string memory){
+    function getName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.name;
     }
 
-    function getFatherLastName() public view  ownerOrGovernment returns (string memory){
+    function getFatherLastName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.fLastName;
     }
 
-    function getMotherLastName() public view  ownerOrGovernment returns (string memory){
+    function getMotherLastName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.mLastName;
     }
 
-    function getFullName() public view  ownerOrGovernment returns (string memory){
+    function getFullName() public view  ownerGovernmentOrAdmin returns (string memory){
       return string.concat(fullName.name," ",fullName.fLastName," ",fullName.mLastName);
     }
 
 
-    function isMale() public view ownerOrGovernment returns (bool){
+    function isMale() public view ownerGovernmentOrAdmin returns (bool){
       return genderM;
     }
 
 
-    function getBirthDay() public view ownerOrGovernment returns (uint){
+    function getBirthDay() public view ownerGovernmentOrAdmin returns (uint){
       return birthday;
     }
 
-    function getLocality() public view ownerOrGovernment returns (uint16){
+    function getLocality() public view ownerGovernmentOrAdmin returns (uint16){
       return locality;
     }
 
-    function getMunicipalty() public view ownerOrGovernment returns (uint16){
+    function getMunicipalty() public view ownerGovernmentOrAdmin returns (uint16){
       return municipalty;
     }
 
-    function getState() public view ownerOrGovernment returns (uint16){
+    function getState() public view ownerGovernmentOrAdmin returns (uint16){
       return state;
     }
 
-    function getCountry() public view ownerOrGovernment returns (uint16){
+    function getCountry() public view ownerGovernmentOrAdmin returns (uint16){
       return country;
     }
     
-    function getCURP() public view ownerOrGovernment returns (string memory){
+    function getCURP() public view ownerGovernmentOrAdmin returns (string memory){
       return curp;
     }
 

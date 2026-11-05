@@ -26,14 +26,16 @@ contract GralEHR is OwnerInterface{
     mapping(string => GralEHR_Match) private curpMatches;
     
 
-    modifier mustBeGovernment(address _entitySC){
+    modifier onlyActiveGovernmentOrAdmin(address _entitySC){
       EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
-      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government || 
+        contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Only government or admin can perform this action.");
+      require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
       _;
     }
 
   
-  constructor(address _entitySC,address _academicDeg) mustBeGovernment(_entitySC) {
+  constructor(address _entitySC,address _academicDeg) onlyActiveGovernmentOrAdmin(_entitySC) {
     academicDegree = _academicDeg;
     entitySC = _entitySC;
     dateCreation = block.timestamp;
@@ -62,18 +64,19 @@ contract GralEHR is OwnerInterface{
       curpMatches[_curp] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender);
     }
 
-    modifier ownerOrGovernment(string memory _curp){      
+    modifier ownerGovernmentOrAdmin(string memory _curp){      
       EntitiesInterface contractEntities = EntitiesInterface(entitySC);      
       BirthCertificate bC = BirthCertificate(curpMatches[_curp].birthCerSC);
-      require((msg.sender==bC.owner()) || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government),"Owner or Governments can execute this method");
+      require((msg.sender==bC.owner()) || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government)
+            || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin),"Owner, Governments or Admins can execute this method");
       _;
     }
 
-    function getEHR_SC(string memory curp) public view ownerOrGovernment(curp) returns (address) {
+    function getEHR_SC(string memory curp) public view ownerGovernmentOrAdmin(curp) returns (address) {
       return curpMatches[curp].ehr; //if it does not exist returns address(0)
     }
 
-    function getWhoCreatedEHR(string memory curp) public view ownerOrGovernment(curp) returns (address) {
+    function getWhoCreatedEHR(string memory curp) public view ownerGovernmentOrAdmin(curp) returns (address) {
       return curpMatches[curp].healthCP; //if it does not exist returns address(0)
     }
 
