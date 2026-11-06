@@ -39,7 +39,12 @@ apiEndpoints:
 #  #Consult info
   entitiesGetInfo:
     host:  localhost
-    paths: '/getInfoEntity'    
+    paths: '/getInfoEntity'
+
+  #SetActive (activate or deactivate an entity)
+  entitiesSetActive:
+    host:  localhost
+    paths: '/setActiveEntity'
    
 
 #LinkContract
@@ -283,6 +288,7 @@ pipelines:
       - entitiesRegister
       - entitiesConsultP
       - entitiesGetInfo
+      - entitiesSetActive
       - didentitylinkContract
       - didentityConsult
       - didentityConsultP

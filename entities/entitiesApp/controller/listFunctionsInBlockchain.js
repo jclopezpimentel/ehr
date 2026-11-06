@@ -13,13 +13,16 @@ initializer.searchFunctionAndSmartContract = function(functionName){
         case "getCreatorEntityP": return ["Found","getCreator","./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
         case "entityExistsEntityP": return ["Found","entityExists","./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
         case "getDigIdentityAddEntityP": return ["Found","getDigIdentityAdd","./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
+        case "isActiveEntityP": return ["Found","isActive","./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
+        // Entities: activate or deactivate an entity (POST /setActiveEntity)
+        case "setActiveOrInactiveAdd": return ["Found","setActiveOrInactiveAdd","./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
         case "getInfoEntity": return ["Found",["getType", "getDigIdentityAdd", "getCreator"],"./smartContract/Entities.abi","./smartContract/Entities.bytecode"];
         case "linkContract": return ["Found","linkContract","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
         // DigitalIdentity: public attributes / methods without params (GET /consultDI)
         case "ownerDI": return ["Found","owner","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
         case "governmentDI": return ["Found","government","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
         case "nameContractDI": return ["Found","nameContract","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
-        case "addOfEntitiesDI": return ["Found","addOfEntities","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
+        case "entitySCDI": return ["Found","entitySC","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
         case "dateCreationDI": return ["Found","dateCreation","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
         case "dateLastUpdateDI": return ["Found","dateLastUpdate","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];
         case "numberOfLinkedContractsDI": return ["Found","numberOfLinkedContracts","./smartContract/DigitalIdentity.abi","./smartContract/DigitalIdentity.bytecode"];

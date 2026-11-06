@@ -6,7 +6,7 @@ var initializer = {};
 
 // GET /consultDI?digitalId=<DigitalIdentity address>&publicMethod=<method>
 // Public attributes / methods of DigitalIdentity without params:
-// owner, government, nameContract, addOfEntities, dateCreation, dateLastUpdate, numberOfLinkedContracts
+// owner, government, nameContract, entitySC, dateCreation, dateLastUpdate, numberOfLinkedContracts
 initializer.consultDI = async function (req, res){
 	const funName = req.query.publicMethod + "DI"; //alias in listFunctionsInBlockchain
 	const [found, functionName,contractABIPath,contractByteCodeSource] = listFuncInChain.searchFunctionAndSmartContract(funName);

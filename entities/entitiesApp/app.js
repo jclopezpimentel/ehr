@@ -29,6 +29,7 @@ var consult = require('./routes/consult');
 var consultP = require('./routes/consultP');
 var registerEntity = require('./routes/registerEntity');
 var getInfo = require('./routes/getInfo');
+var setActiveEntity = require('./routes/setActiveEntity');
 //Digital identity services
 var linkContract = require('./routes/linkContract');
 var consultDI = require('./routes/consultDI');
@@ -45,6 +46,7 @@ app.use('/consultEntity', consult);
 app.use('/registerEntity', registerEntity);
 app.use('/consultEntityP', consultP);
 app.use('/getInfoEntity', getInfo);
+app.use('/setActiveEntity', setActiveEntity);
 //Digital identity services
 app.use('/linkContract', linkContract);
 app.use('/consultDI', consultDI);
