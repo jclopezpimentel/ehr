@@ -13,11 +13,13 @@ contract Entities is OwnerInterface, EntitiesInterface{
     }   
     mapping(address => Entity) private entities;
 
+      bool private active;
     address public owner;
     address public government;
     ContractName public nameContract = ContractName.Entities;
        uint public dateCreation;
        uint public dateLastUpdate;
+       string private password;
 
     // Modifier to ensure the government and/or admin can execute some actions
     modifier onlyActiveGovernmentOrAdmin() {
@@ -34,25 +36,42 @@ contract Entities is OwnerInterface, EntitiesInterface{
         _; 
     }
 
-    constructor() {        
+    modifier onlyAliveOwner() {
+        require(msg.sender == owner, "Incorrect owner");
+        require(active, "Owner must be alive");
+        _;
+    }
+
+    constructor(string memory pass) {        
         dateCreation = block.timestamp;
         dateLastUpdate = dateCreation;        
         government = msg.sender; // A critical sender becomes the root government
         owner = government; //The government is also the owner
         entities[government] = Entity(government,address(0), true, EntityType.Government); 
+        active = true;
+        password = pass;
     }
 
     // Function to register new entities
     function registerEntity(
         address _entityAddress,
         EntityType _entityType
-    ) public onlyActiveGovernmentOrAdmin() {
+    ) public onlyAliveOwner onlyActiveGovernmentOrAdmin() {
         require(entities[_entityAddress].creator==address(0),"Entity already exists");
         dateLastUpdate = block.timestamp;  
 
         //A registration of an entity includes the creation of its DigitalIDentity
         DigitalIdentity didentityAdd = new DigitalIdentity(_entityAddress,address(this),msg.sender);
         entities[_entityAddress] = Entity(msg.sender, address(didentityAdd), true, _entityType);        
+    }
+    function setNotActive(string memory pass) public onlyAliveOwner() {        
+        require(keccak256(bytes(password)) == keccak256(bytes(pass)), "Password is incorrect!");
+        active = false;    
+        entities[owner].active = active;    
+    }
+
+    function isActive() public view  returns (bool){
+      return active;
     }
 
     function getType(address _address) public view entityExistsIn(_address) returns (EntityType) {
@@ -73,6 +92,7 @@ contract Entities is OwnerInterface, EntitiesInterface{
     }
 
     function setActiveOrInactiveAdd(address _address, bool _active) public entityExistsIn(_address) onlyActiveGovernmentOrAdmin() {
+        require(_address!=owner,"Use setNotActive method to conver this smart contract in read-only");
         entities[_address].active = _active;
     }
     function isActive(address _address) public view entityExistsIn(_address) returns (bool){
