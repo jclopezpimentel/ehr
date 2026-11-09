@@ -15,7 +15,7 @@ contract GralEHR is OwnerInterface{
    address public owner;
    ContractName public nameContract=ContractName.GralEHR;
    address private entitySC;
-   address private academicDegree;
+   address private academicsDegree;
 
     struct GralEHR_Match{
         address ehr; // address of the EHR contract
@@ -35,8 +35,8 @@ contract GralEHR is OwnerInterface{
     }
 
   
-  constructor(address _entitySC,address _academicDeg) onlyActiveGovernmentOrAdmin(_entitySC) {
-    academicDegree = _academicDeg;
+  constructor(address _entitySC,address _academicsDeg) onlyActiveGovernmentOrAdmin(_entitySC) {
+    academicsDegree = _academicsDeg;
     entitySC = _entitySC;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;
@@ -45,22 +45,23 @@ contract GralEHR is OwnerInterface{
   }
 
 
-    modifier mustBeHealthCP(){ // must be healthCare Professional  
-      AcademicsDegree academicDegSC = AcademicsDegree(academicDegree);
-      require(academicDegSC.degreeIsTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
+    modifier mustBeActiveHealthCP(string memory _idDegree){ // must be healthCare Professional  
+      AcademicsDegree academicDegSC = AcademicsDegree(academicsDegree);
+      require(academicDegSC.isActive(_idDegree),"The introduced degree is not active");
+      require(academicDegSC.whatTypeDegree(_idDegree)==AcademicsDegree.TypeDegree.Medicine,"Incorrect HealthCare Professional user");
       _;
     }
 
     //This function creates Electronic Health Records (EHR) for entities
     //An entity can have an only one EHR.
-    function createEHR(address _birthCerSC, string memory _curp) 
-     public mustBeHealthCP {
+    function createEHR(address _birthCerSC, string memory _curp, string memory _idDegree) 
+     public mustBeActiveHealthCP(_idDegree) {
       BirthCertificate bc = BirthCertificate(_birthCerSC);
       address digitalId = bc.digitalIdentity();
       require(digitalId!= address(0), "Incorrect digital identity address or birthcertificate address");
       require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
       require(curpMatches[_curp].birthCerSC==address(0),"Curp already exists");
-      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicDegree);
+      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicsDegree);
       curpMatches[_curp] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender);
     }
 

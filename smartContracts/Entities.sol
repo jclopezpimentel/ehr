@@ -19,7 +19,7 @@ contract Entities is OwnerInterface, EntitiesInterface{
     ContractName public nameContract = ContractName.Entities;
        uint public dateCreation;
        uint public dateLastUpdate;
-       string private password;
+       string private password; //this password is only used by the owner to do the smart contract read-only
 
     // Modifier to ensure the government and/or admin can execute some actions
     modifier onlyActiveGovernmentOrAdmin() {

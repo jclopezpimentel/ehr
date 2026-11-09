@@ -74,6 +74,10 @@ contract AcademicsDegree is OwnerInterface{
         return (diploma[_idDegree].active);
     }
 
+    function whatTypeDegree(string memory _idDegree) public view diplomaExistsIn(_idDegree) returns (TypeDegree){
+        return (diploma[_idDegree].typeDegree);
+    }
+    
     function degreeIsTypeDegree(address add, TypeDegree typeDegree) public view returns (bool) {
       string[] storage ids = diplomasByOwner[add];
       for (uint i = 0; i < ids.length; i++) {
