@@ -92,6 +92,11 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
+    function setNewName(string memory newName) public mustBeGovernment(entitySC){
+      fullName.name = newName;
+      dateLastUpdate = block.timestamp;
+      emit governmentTransactions(msg.sender,dateLastUpdate);
+    }
 
     function getName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.name;
