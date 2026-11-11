@@ -77,7 +77,8 @@ contract AcademicsDegree is OwnerInterface{
     function whatTypeDegree(string memory _idDegree) public view diplomaExistsIn(_idDegree) returns (TypeDegree){
         return (diploma[_idDegree].typeDegree);
     }
-    
+
+    //This function checks if the introduced degree matches with the introduced address
     function degreeIsTypeDegree(address add, TypeDegree typeDegree) public view returns (bool) {
       string[] storage ids = diplomasByOwner[add];
       for (uint i = 0; i < ids.length; i++) {
@@ -87,5 +88,17 @@ contract AcademicsDegree is OwnerInterface{
       }
       return false;    
     }
+
+    //This function checks if the introduced degree matches with the introduced address and whether is active
+    function degreeIsActiveTypeDegree(address add, TypeDegree typeDegree) public view returns (bool) {
+      string[] storage ids = diplomasByOwner[add];
+      for (uint i = 0; i < ids.length; i++) {
+        if (diploma[ids[i]].typeDegree == typeDegree) {
+            return diploma[ids[i]].active;
+        }
+      }
+      return false;    
+    }
+
 
 }

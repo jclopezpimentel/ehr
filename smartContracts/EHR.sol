@@ -36,13 +36,13 @@ contract EHR is OwnerInterface{
     mapping(bytes32 => HealthRecord) private healthRecords;
     //uint private idAch=0;
 
-    modifier mustBeHealthCP(address _academicDeg){ // must be healthCare Professional  
+    modifier mustBeActiveHealthCP(address _academicDeg){ // must be healthCare Professional  
       AcademicsDegree academicDegSC = AcademicsDegree(_academicDeg);
-      require(academicDegSC.degreeIsTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
+      require(academicDegSC.degreeIsActiveTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user or it is inactive");
       _;
     }
 
-  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeHealthCP(_academicDeg){    
+  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeActiveHealthCP(_academicDeg){    
     //This line is checking if the contract is called by other contract.
     require(msg.sender.code.length > 0,"It was not called by a contract");
     //This line is collating if the sender is the same that _gralEHR, which eventually must be the contract caller
@@ -73,7 +73,7 @@ contract EHR is OwnerInterface{
      * @param details Corresponds to the content of the record being stored in hash format
      */
     function addHealthRecord(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 details) 
-     public mustBeHealthCP(msg.sender) {
+     public mustBeActiveHealthCP(academicDeg) {
         require(healthRecords[idH].idH==bytes32(0),"Error: Id already exists");
         healthRecords[idH] = HealthRecord(idH,titleH,block.timestamp,sectionH,details, msg.sender);
     }
