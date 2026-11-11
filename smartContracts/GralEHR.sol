@@ -72,7 +72,7 @@ contract GralEHR is OwnerInterface{
             || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government)
             || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin)
             || (curpMatches[_curp].healthCP==msg.sender),//professional healtcare
-            "Owner, Governments or Admins can execute this method");
+            "Owner, Governments, Admins or HealthCP can execute this method");
       _;
     }
 
