@@ -94,6 +94,11 @@ contract DigitalIdentity is OwnerInterface{
         return (addressesContracts.length);
     }
 
+    function getLinkedContractAddress(uint index) public view returns (address){
+        require(index < addressesContracts.length, "Invalid index");
+        return addressesContracts[index];
+    }
+
     function getContractName(address _contractAdd) public view returns (ContractName) {
         LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.nameContract);

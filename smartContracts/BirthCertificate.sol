@@ -37,9 +37,10 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
          uint dateCreation
   );
 
-    modifier mustBeGovernment(address _entitySC){
+    modifier mustBeGovernmentOrAdmin(address _entitySC){
       EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
-      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government
+      || contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Incorrect government user");
       require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
       _;
     }
