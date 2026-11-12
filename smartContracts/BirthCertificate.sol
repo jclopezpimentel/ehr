@@ -40,14 +40,14 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
     modifier mustBeGovernmentOrAdmin(address _entitySC){
       EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
       require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government
-      || contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Incorrect government user");
+      || contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Incorrect government or Admin user");
       require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
       _;
     }
   //To create an individual birth certificate is required to pass its personal data, the general contractEntity and the digitalIdentity
   constructor(FullName memory _fullName, bool _gender, 
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
-              address _entitySC, address _digIden) mustBeGovernment(_entitySC) {
+              address _entitySC, address _digIden) mustBeGovernmentOrAdmin(_entitySC) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
     EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
     //It's important to check that a birth certificate corresponds to an Individual entity
@@ -81,19 +81,19 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
       _;
     }
 
-    function setFatherAddress(address fAddress) public mustBeGovernment(entitySC) {        
+    function setFatherAddress(address fAddress) public mustBeGovernmentOrAdmin(entitySC) {        
         tokenFather = fAddress;
         dateLastUpdate = block.timestamp;
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
-    function setMotherAddress(address mAddress) public mustBeGovernment(entitySC) {        
+    function setMotherAddress(address mAddress) public mustBeGovernmentOrAdmin(entitySC) {        
         tokenMother = mAddress;
         dateLastUpdate = block.timestamp;
         emit governmentTransactions(msg.sender,dateCreation);
     }
 
-    function setNewName(string memory newName) public mustBeGovernment(entitySC){
+    function setNewName(string memory newName) public mustBeGovernmentOrAdmin(entitySC){
       fullName.name = newName;
       dateLastUpdate = block.timestamp;
       emit governmentTransactions(msg.sender,dateLastUpdate);
