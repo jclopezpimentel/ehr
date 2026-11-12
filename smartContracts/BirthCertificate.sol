@@ -34,7 +34,7 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
    
   event governmentTransactions(
       address indexed executor,
-         uint dateCreation
+         uint timestamp
   );
 
     modifier mustBeGovernmentOrAdmin(address _entitySC){
@@ -81,16 +81,20 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
       _;
     }
 
-    function setFatherAddress(address fAddress) public mustBeGovernmentOrAdmin(entitySC) {        
-        tokenFather = fAddress;
-        dateLastUpdate = block.timestamp;
-        emit governmentTransactions(msg.sender,dateCreation);
+    function setFatherAddress(address fAddress) public mustBeGovernmentOrAdmin(entitySC){
+      require(EntitiesInterface(entitySC).entityExists(fAddress),"Father is not registered");
+      require(EntitiesInterface(entitySC).getType(fAddress) == EntitiesInterface.EntityType.Individual,"Father must be an individual");
+      tokenFather = fAddress;
+      dateLastUpdate = block.timestamp;
+      emit governmentTransactions(msg.sender, dateLastUpdate);
     }
 
     function setMotherAddress(address mAddress) public mustBeGovernmentOrAdmin(entitySC) {        
+        require(EntitiesInterface(entitySC).entityExists(mAddress),"Mother is not registered");
+        require(EntitiesInterface(entitySC).getType(mAddress) == EntitiesInterface.EntityType.Individual,"Mother must be an individual");
         tokenMother = mAddress;
         dateLastUpdate = block.timestamp;
-        emit governmentTransactions(msg.sender,dateCreation);
+        emit governmentTransactions(msg.sender, dateLastUpdate);
     }
 
     function setNewName(string memory newName) public mustBeGovernmentOrAdmin(entitySC){

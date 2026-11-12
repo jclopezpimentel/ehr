@@ -28,6 +28,7 @@ contract AcademicsDegree is OwnerInterface{
         string details; //additional details of the degree
         bool active; //pinpoints if this diploma is active or not
         bool exists; //true is it exists
+        uint lastUpdated; //when it was updated
     }
         
     mapping(string => Diploma) private diploma;
@@ -60,14 +61,15 @@ contract AcademicsDegree is OwnerInterface{
      public onlyActiveGovernmentOrAdmin(entitySC) {
       BirthCertificate birthCer = BirthCertificate(_BirthCertificate); 
       require(birthCer.owner()==_owner,"Invalid birthcertificate addresss or owner address");
-      //require(birthCer.isAlive(),"Requiere that the birthcertificate is alive ");
       require(!diploma[idDegree].exists, "idDegree already exists");      
-      diploma[idDegree] = Diploma(idDegree,_owner,_BirthCertificate,title,date,degree,typeDegree,details,true,true);
+      diploma[idDegree] = Diploma(idDegree,_owner,_BirthCertificate,title,date,degree,typeDegree,details,true,true,block.timestamp);
       diplomasByOwner[_owner].push(idDegree);
+      dateLastUpdate = block.timestamp;
     }
 
     function setActiveOrInactiveDiploma(string memory _idDegree, bool _active) public diplomaExistsIn(_idDegree) onlyActiveGovernmentOrAdmin(entitySC) {
         diploma[_idDegree].active = _active;
+        dateLastUpdate = block.timestamp;
     }
 
     function isActive(string memory _idDegree) public view diplomaExistsIn(_idDegree) returns (bool){
