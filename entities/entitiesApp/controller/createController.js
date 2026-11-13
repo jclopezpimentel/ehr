@@ -3,7 +3,8 @@ var utilities = require('./utilities');
 var listFuncInChain = require('./listFunctionsInBlockchain');
 var initializer = {};
 
-async function executeConstructor(gas, from, contractABI, contractByteCodeObj) {
+// args: values for the constructor of the contract (Entities: [password])
+async function executeConstructor(gas, from, contractABI, contractByteCodeObj, args) {
 	console.log("ExecutingConstructor");
 	var y = "";
 	try {
@@ -21,7 +22,7 @@ async function executeConstructor(gas, from, contractABI, contractByteCodeObj) {
 			const userContract = new web3.eth.Contract(contractABI);
 			console.log("Entró3: " + from);
 			const nonce = await web3.eth.getTransactionCount(from);
-			const contract = await userContract.deploy({ data: contractByteCodeObj });
+			const contract = await userContract.deploy({ data: contractByteCodeObj, arguments: args });
 			await contract.send( //gasLimit must be set to 6721975, otherwise it will not work
 				{ from: from, gas: gas, gasPrice: "20000000000", nonce: nonce }).on('receipt', function (receipt) {
 					console.log("Entró4: " + from);
@@ -61,7 +62,7 @@ async function createSC(obj) {
 	if(functionName === "constructor"){	
 		//resul = utilities.toResult("false", "0", "Testing:all ok");  // it is false when there is no error
 		try {
-			const result = await executeConstructor(gas, from, contractABI, contractByteCodeObj);
+			const result = await executeConstructor(gas, from, contractABI, contractByteCodeObj, [obj.body.password]);
 			resul = utilities.toResult("Ok", "0", result);
 			return resul;
 		} catch (error) {
@@ -87,6 +88,7 @@ initializer.create = async function (req, res) {
 	}else{
 		const gas = req.body.gas;
 		const from = req.body.from;
+		const password = req.body.password; // Entities constructor(string pass): used later by setNotActive(pass)
 		console.log("Request from: " + from);
 		//It is required that all variables contain any value (not empty)
 		const obj = {
@@ -96,10 +98,12 @@ initializer.create = async function (req, res) {
 				contractABIPath: contractABIPath,
 				contractByteCodeSource: contractByteCodeSource,
 				gas: gas,
-				from: from
+				from: from,
+				password: password
 			}
 		};
-		const errNum = errorControl.someFieldIsEmpty(obj);
+		// someFieldIsEmpty does not detect a missing field (undefined == "" is false), so password is checked apart
+		const errNum = errorControl.someFieldIsEmpty(obj) || ((password === undefined || password === null) ? 1 : 0);
 		if (errNum) {  //				
 			resul = utilities.toResult("Error", errNum.toString(), errorControl.errors(errNum));
 		} else {

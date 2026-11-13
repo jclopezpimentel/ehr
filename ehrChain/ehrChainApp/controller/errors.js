@@ -16,6 +16,7 @@ initializer.errors = function(numError){
     resultError[11]= "ERROR: Incorrect function name, it cannot link with one in the blockchain";
     resultError[12]= "ERROR: web3 is not defined";
     resultError[13]= "ERROR: while processing getInfo, internally an error was generated";
+    resultError[14]= "ERROR: hashes must be bytes32 values (0x followed by 64 hexadecimal characters)";
     return resultError[numError];
 }
 
@@ -36,8 +37,9 @@ initializer.someFieldIsEmpty = function(ob){
 	for(var i=0;i<n;i++){
 		var field=Object.keys(obj)[i];
 		var fieldV= obj[field];
-		if(fieldV==""){
-			return 1; // it means that an empty field was found
+		// a missing parameter arrives as undefined, and undefined == "" is false in JavaScript
+		if(fieldV === undefined || fieldV === null || fieldV==""){
+			return 1; // it means that an empty or missing field was found
 		}
 	}
 	return 0;	

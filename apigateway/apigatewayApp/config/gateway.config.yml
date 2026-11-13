@@ -141,33 +141,34 @@ apiEndpoints:
     host:  localhost
     paths: '/proofEHRChain'
 
-  ehrchainCreateGralEHR:
+  # Names follow Table 8 (EHRChain) of the paper
+  ehrchainCreateGralEHRChain:
     host:  localhost
-    paths: '/createGralEHR'
+    paths: '/createGralEHRChain'
 
-  ehrchainCreateEHR:
+  ehrchainCreateEHRChain:
     host:  localhost
-    paths: '/createEHR'
+    paths: '/createEHRChain'
 
-  ehrchainConsultGralEHR:
+  ehrchainConsultGralEHRChain:
     host:  localhost
-    paths: '/consultGralEHR'
+    paths: '/consultGralEHRChain'
 
-  ehrchainConsultGralEHRP:
+  ehrchainConsultGralEHRChainP:
     host:  localhost
-    paths: '/consultGralEHRP'
+    paths: '/consultGralEHRChain_P'
 
-  ehrchainAddEHR:
+  ehrchainAddEHRChain:
     host:  localhost
-    paths: '/addEHR'
+    paths: '/addEHRChain'
 
-  ehrchainCheckEHR:
+  ehrchainCheckIntegrityEHRChain:
     host:  localhost
-    paths: '/checkEHR'
+    paths: '/checkIntegrityEHRChain'
 
-  ehrchainConsultEHR:
+  ehrchainConsultEHRChain:
     host:  localhost
-    paths: '/consultEHR'
+    paths: '/consultEHRChain'
 
 
 #  birthcertificateSetAddress:
@@ -324,13 +325,13 @@ pipelines:
   ehrchainPipeline:
     apiEndpoints:
       - ehrchainProof
-      - ehrchainCreateGralEHR
-      - ehrchainCreateEHR
-      - ehrchainConsultGralEHR
-      - ehrchainConsultGralEHRP
-      - ehrchainAddEHR
-      - ehrchainCheckEHR
-      - ehrchainConsultEHR
+      - ehrchainCreateGralEHRChain
+      - ehrchainCreateEHRChain
+      - ehrchainConsultGralEHRChain
+      - ehrchainConsultGralEHRChainP
+      - ehrchainAddEHRChain
+      - ehrchainCheckIntegrityEHRChain
+      - ehrchainConsultEHRChain
     policies:
       - proxy:
           - action:
