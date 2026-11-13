@@ -15,7 +15,7 @@ contract GralEHR is OwnerInterface{
    address public owner;
    ContractName public nameContract=ContractName.GralEHR;
    address private entitySC;
-   address private academicDegree;
+   address private academicsDegree;
 
     struct GralEHR_Match{
         address ehr; // address of the EHR contract
@@ -26,15 +26,17 @@ contract GralEHR is OwnerInterface{
     mapping(string => GralEHR_Match) private curpMatches;
     
 
-    modifier mustBeGovernment(address _entitySC){
+    modifier onlyActiveGovernmentOrAdmin(address _entitySC){
       EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
-      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government || 
+        contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Only government or admin can perform this action.");
+      require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
       _;
     }
 
   
-  constructor(address _entitySC,address _academicDeg) mustBeGovernment(_entitySC) {
-    academicDegree = _academicDeg;
+  constructor(address _entitySC,address _academicsDeg) onlyActiveGovernmentOrAdmin(_entitySC) {
+    academicsDegree = _academicsDeg;
     entitySC = _entitySC;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;
@@ -43,37 +45,42 @@ contract GralEHR is OwnerInterface{
   }
 
 
-    modifier mustBeHealthCP(){ // must be healthCare Professional  
-      AcademicsDegree academicDegSC = AcademicsDegree(academicDegree);
-      require(academicDegSC.degreeIsTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
+    modifier mustBeActiveHealthCP(string memory _idDegree){ // must be healthCare Professional  
+      AcademicsDegree academicDegSC = AcademicsDegree(academicsDegree);
+      require(academicDegSC.isActive(_idDegree),"The introduced degree is not active");
+      require(academicDegSC.whatTypeDegree(_idDegree)==AcademicsDegree.TypeDegree.Medicine,"Incorrect HealthCare Professional user");
       _;
     }
 
     //This function creates Electronic Health Records (EHR) for entities
     //An entity can have an only one EHR.
-    function createEHR(address _birthCerSC, string memory _curp) 
-     public mustBeHealthCP {
+    function createEHR(address _birthCerSC, string memory _curp, string memory _idDegree) 
+     public mustBeActiveHealthCP(_idDegree) {
       BirthCertificate bc = BirthCertificate(_birthCerSC);
       address digitalId = bc.digitalIdentity();
       require(digitalId!= address(0), "Incorrect digital identity address or birthcertificate address");
       require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
       require(curpMatches[_curp].birthCerSC==address(0),"Curp already exists");
-      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicDegree);
+      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicsDegree);
       curpMatches[_curp] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender);
     }
 
-    modifier ownerOrGovernment(string memory _curp){      
+    modifier OwnerGovernmentAdminOrHealthCP(string memory _curp){      
       EntitiesInterface contractEntities = EntitiesInterface(entitySC);      
       BirthCertificate bC = BirthCertificate(curpMatches[_curp].birthCerSC);
-      require((msg.sender==bC.owner()) || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government),"Owner or Governments can execute this method");
+      require((msg.sender==bC.owner()) 
+            || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government)
+            || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin)
+            || (curpMatches[_curp].healthCP==msg.sender),//professional healtcare
+            "Owner, Governments, Admins or HealthCP can execute this method");
       _;
     }
 
-    function getEHR_SC(string memory curp) public view ownerOrGovernment(curp) returns (address) {
+    function getEHR_SC(string memory curp) public view OwnerGovernmentAdminOrHealthCP(curp) returns (address) {
       return curpMatches[curp].ehr; //if it does not exist returns address(0)
     }
 
-    function getWhoCreatedEHR(string memory curp) public view ownerOrGovernment(curp) returns (address) {
+    function getWhoCreatedEHR(string memory curp) public view OwnerGovernmentAdminOrHealthCP(curp) returns (address) {
       return curpMatches[curp].healthCP; //if it does not exist returns address(0)
     }
 

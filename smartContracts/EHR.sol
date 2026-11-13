@@ -36,11 +36,21 @@ contract EHR is OwnerInterface{
     mapping(bytes32 => HealthRecord) private healthRecords;
     //uint private idAch=0;
 
-  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg){    
+    modifier mustBeActiveHealthCP(address _academicDeg){ // must be healthCare Professional  
+      AcademicsDegree academicDegSC = AcademicsDegree(_academicDeg);
+      require(academicDegSC.degreeIsActiveTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user or it is inactive");
+      _;
+    }
+
+  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeActiveHealthCP(_academicDeg){    
     //This line is checking if the contract is called by other contract.
     require(msg.sender.code.length > 0,"It was not called by a contract");
+    //This line is collating if the sender is the same that _gralEHR, which eventually must be the contract caller
     require(msg.sender==_gralEHR,"Error: incorrect sender");
     BirthCertificate bc = BirthCertificate(_birthCerAdd);
+
+    // This function is callating if curp belongs to the birth certificate owner
+    require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
     entitySC = bc.entitySC();
     academicDeg = _academicDeg;
     birthCerAdd = _birthCerAdd;
@@ -54,13 +64,6 @@ contract EHR is OwnerInterface{
   }
 
 
-
-    modifier mustBeHealthCP(){ // must be healthCare Professional  
-      AcademicsDegree academicDegSC = AcademicsDegree(academicDeg);
-      require(academicDegSC.degreeIsTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user");   
-      _;
-    }
-
     /**
      * @notice It adds health records within the smart contract EHR
      * @dev Requires that the health record does not already exist. Reverts if idH is taken.
@@ -70,7 +73,7 @@ contract EHR is OwnerInterface{
      * @param details Corresponds to the content of the record being stored in hash format
      */
     function addHealthRecord(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 details) 
-     public mustBeHealthCP {
+     public mustBeActiveHealthCP(academicDeg) {
         require(healthRecords[idH].idH==bytes32(0),"Error: Id already exists");
         healthRecords[idH] = HealthRecord(idH,titleH,block.timestamp,sectionH,details, msg.sender);
     }
