@@ -12,8 +12,8 @@ contract EHR is OwnerInterface{
       uint public dateLastUpdate=0;
    address public owner;
    ContractName public nameContract=ContractName.EHR;
-    address public government; //healthcare professional who created the EHR
-    address private healthCP; //healthcare professional who created the EHR
+    address public government; 
+    address public healthCP;//healthcare professional who created the EHR
     address private entitySC;
    string private curp;
    address private birthCerAdd;
@@ -36,13 +36,31 @@ contract EHR is OwnerInterface{
     mapping(bytes32 => HealthRecord) private healthRecords;
     //uint private idAch=0;
 
-    modifier mustBeActiveHealthCP(address _academicDeg){ // must be healthCare Professional  
+    modifier mustBeActiveHealthCP(address _healthCP,address _academicDeg){ // must be healthCare Professional  
       AcademicsDegree academicDegSC = AcademicsDegree(_academicDeg);
-      require(academicDegSC.degreeIsActiveTypeDegree(msg.sender,AcademicsDegree.TypeDegree.Medicine),"Incorrect HealthCare Professional user or it is inactive");
+      require(academicDegSC.degreeIsActiveTypeDegree(_healthCP,AcademicsDegree.TypeDegree.Medicine),"Healthcare professional has no active Medicine degree");
       _;
     }
 
-  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeActiveHealthCP(_academicDeg){    
+    modifier senderMustBeActiveHealthCP(address _academicDeg,string memory _idDegree) {
+      AcademicsDegree academicDegSC = AcademicsDegree(_academicDeg);
+      require(academicDegSC.ownerOfDiploma(_idDegree) == msg.sender,"Sender is not the owner of the diploma");
+      require(academicDegSC.isActive(_idDegree),"Academic degree is inactive");
+      require(academicDegSC.whatTypeDegree(_idDegree) ==AcademicsDegree.TypeDegree.Medicine,"Academic degree is not Medicine");
+      EntitiesInterface contractEntities = EntitiesInterface(entitySC);
+      require(contractEntities.isActive(msg.sender),"Healthcare professional is inactive");
+      _;
+    }
+
+    modifier ownerMustBeActive() {
+      EntitiesInterface contractEntities = EntitiesInterface(entitySC);
+      require(contractEntities.isActive(owner),"Owner is inactive");
+      _;
+    }
+
+
+
+  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeActiveHealthCP(_healthCP,_academicDeg){    
     //This line is checking if the contract is called by other contract.
     require(msg.sender.code.length > 0,"It was not called by a contract");
     //This line is collating if the sender is the same that _gralEHR, which eventually must be the contract caller
@@ -52,10 +70,13 @@ contract EHR is OwnerInterface{
     // This function is callating if curp belongs to the birth certificate owner
     require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
     entitySC = bc.entitySC();
+    EntitiesInterface contractEntities = EntitiesInterface(entitySC);
+    address goverP = contractEntities.getCreator(_healthCP);
+    require(contractEntities.getType(goverP)==EntitiesInterface.EntityType.Government,"Creator of healthCP is not a government");
+    government = goverP;
     academicDeg = _academicDeg;
     birthCerAdd = _birthCerAdd;
-    owner = bc.owner();
-    government = _healthCP;
+    owner = bc.owner();    
     healthCP = _healthCP;
     curp = _curp;
     dateCreation = block.timestamp;
@@ -72,10 +93,11 @@ contract EHR is OwnerInterface{
      * @param sectionH Corresponds to the Mexican NOM section 004 stored in hash format
      * @param details Corresponds to the content of the record being stored in hash format
      */
-    function addHealthRecord(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 details) 
-     public mustBeActiveHealthCP(academicDeg) {
+    function addHealthRecord(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 details,string memory _idDegree) 
+     public ownerMustBeActive senderMustBeActiveHealthCP(academicDeg,_idDegree) {
         require(healthRecords[idH].idH==bytes32(0),"Error: Id already exists");
         healthRecords[idH] = HealthRecord(idH,titleH,block.timestamp,sectionH,details, msg.sender);
+        dateLastUpdate = block.timestamp;
     }
 
     function checkEHRIntegrity(bytes32 idH, bytes32 titleH, bytes32 sectionH, bytes32 hashDetails) public view returns (bool) {      

@@ -76,6 +76,10 @@ contract AcademicsDegree is OwnerInterface{
         return (diploma[_idDegree].active);
     }
 
+    function ownerOfDiploma(string memory _idDegree) public view diplomaExistsIn(_idDegree) returns (address){
+        return (diploma[_idDegree].owner);
+    }
+
     function whatTypeDegree(string memory _idDegree) public view diplomaExistsIn(_idDegree) returns (TypeDegree){
         return (diploma[_idDegree].typeDegree);
     }

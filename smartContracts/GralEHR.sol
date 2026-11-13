@@ -46,9 +46,12 @@ contract GralEHR is OwnerInterface{
 
 
     modifier mustBeActiveHealthCP(string memory _idDegree){ // must be healthCare Professional  
+      EntitiesInterface contractEntities = EntitiesInterface(entitySC);          
       AcademicsDegree academicDegSC = AcademicsDegree(academicsDegree);
+      require(contractEntities.isActive(academicDegSC.ownerOfDiploma(_idDegree)),"The academic degree must be active in Entities");
       require(academicDegSC.isActive(_idDegree),"The introduced degree is not active");
       require(academicDegSC.whatTypeDegree(_idDegree)==AcademicsDegree.TypeDegree.Medicine,"Incorrect HealthCare Professional user");
+      require(academicDegSC.ownerOfDiploma(_idDegree)==msg.sender,"the diploma identified by _idDegree must actually belongs to msg.sender");
       _;
     }
 
