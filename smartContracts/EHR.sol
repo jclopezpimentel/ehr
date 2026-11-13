@@ -72,6 +72,7 @@ contract EHR is OwnerInterface{
     entitySC = bc.entitySC();
     EntitiesInterface contractEntities = EntitiesInterface(entitySC);
     address goverP = contractEntities.getCreator(_healthCP);
+    require(goverP != address(0), "Government creator does not exist");
     require(contractEntities.getType(goverP)==EntitiesInterface.EntityType.Government,"Creator of healthCP is not a government");
     government = goverP;
     academicDeg = _academicDeg;
