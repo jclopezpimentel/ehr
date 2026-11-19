@@ -141,46 +141,23 @@ contract Entities is OwnerInterface, EntitiesInterface{
         return active;
     }
 
-    function getType(address _address)
-        public
-        view
-        entityExistsIn(_address)
-        returns (EntityType)
-    {
+    function getType(address _address) public view entityExistsIn(_address) returns (EntityType){
         return entities[_address].entityType;
     }
 
-    function getCreator(address _address)
-        public
-        view
-        entityExistsIn(_address)
-        returns (address)
-    {
+    function getCreator(address _address) public view entityExistsIn(_address) returns (address){
         return entities[_address].creator;
     }
 
-    function entityExists(address _address)
-        public
-        view
-        returns (bool)
-    {
+    function entityExists(address _address) public view returns (bool){
         return entities[_address].creator != address(0);
     }
 
-    function getDigIdentityAdd(address _address)
-        public
-        view
-        entityExistsIn(_address)
-        returns (address)
-    {
+    function getDigIdentityAdd(address _address) public view entityExistsIn(_address) returns (address){
         return entities[_address].dIdentity;
     }
 
-    function setActiveOrInactiveAdd(
-        address _address,
-        bool _active
-    )
-        public
+    function setActiveOrInactiveAdd(address _address, bool _active) public
         entityExistsIn(_address)
         onlyActiveGovernmentOrAdmin
     {
