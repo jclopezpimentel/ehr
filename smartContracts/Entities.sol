@@ -85,10 +85,7 @@ contract Entities is OwnerInterface, EntitiesInterface{
     }
 
     // Function to register new entities
-    function registerEntity(
-        address _entityAddress,
-        EntityType _entityType
-    )
+    function registerEntity(address _entityAddress,EntityType _entityType)
         public
         onlyAliveOwner
         onlyActiveGovernmentOrAdmin
