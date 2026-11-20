@@ -5,7 +5,7 @@ pragma solidity 0.8.23;
 import "./DigitalIdentity.sol";
 import "./EntitiesInterface.sol";
 
-contract BirthCertificate is OwnerInterface{  
+contract BirthCertificate is OwnerInterface{  //This is a birth certificate contract
     //attributes
     struct FullName{
       string name; 
@@ -21,32 +21,42 @@ contract BirthCertificate is OwnerInterface{
     uint16 private municipalty; //municipalty of birthdate: it is only the code      
     uint16 private state; //state of birthdate: it is only the code    
     uint16 private country; //country of birthdate: it is only the code  
-    string private curp; // Unique key of population register
+    string private curp; // Unique key of population register used in Mexico
       uint public dateCreation=0; // it contains the date the contract was created
       uint public dateLastUpdate=0;
    address public tokenFather; //null 0x0000000000000000000000000000000000000000
    address public tokenMother;
    address public government;
    address public owner;
-   ContractType public typeContract=ContractType.BirthCertificate;
+   ContractName public nameContract=ContractName.BirthCertificate;
     address public digitalIdentity; // This is the digital identity of the user
    address public entitySC;
    
   event governmentTransactions(
       address indexed executor,
-         uint dateCreation
+         uint timestamp
   );
 
+    modifier mustBeGovernmentOrAdmin(address _entitySC){
+      EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
+      require(contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government
+      || contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin,"Incorrect government or Admin user");
+      require(contractEntities.isActive(msg.sender),"Only ACTIVE government or admin can perform this action.");
+      _;
+    }
+  //To create an individual birth certificate is required to pass its personal data, the general contractEntity and the digitalIdentity
   constructor(FullName memory _fullName, bool _gender, 
               uint _birthday, uint16 _locality, uint16 _municipality, uint16 _state, uint16 _country, string memory _curp,
-              address _contractEntities, address _digIden) {
+              address _entitySC, address _digIden) mustBeGovernmentOrAdmin(_entitySC) {
     DigitalIdentity dIdentity = DigitalIdentity(_digIden);
+    EntitiesInterface contractEntities = EntitiesInterface(_entitySC);    
+    //It's important to check that a birth certificate corresponds to an Individual entity
+    require(contractEntities.getType(dIdentity.owner())==EntitiesInterface.EntityType.Individual,"Entitiy must be of individual type");
+    require(contractEntities.getCreator(dIdentity.owner())!=address(0),"User already exists");    
+
     digitalIdentity = _digIden;
     owner = dIdentity.owner();
-    entitySC = _contractEntities;
-    EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-    require(contractUsers.getCreator(owner)!=address(0),"User already exists");
-    require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
+    entitySC = _entitySC;    
     fullName = _fullName;
     genderM = _gender; //true will be man and false woman
     birthday = _birthday;     
@@ -63,72 +73,79 @@ contract BirthCertificate is OwnerInterface{
     emit governmentTransactions(msg.sender,dateCreation);
   }
 
-    modifier mustBeGovernment(){
-      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-      require(contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government,"Incorrect government user");
-      _;
-    }
-    modifier ownerOrGovernment(){      
-      EntitiesInterface contractUsers = EntitiesInterface(entitySC);    
-      require((msg.sender==owner) || (contractUsers.getType(msg.sender)==EntitiesInterface.EntityType.Government),"Owner or Governments can execute this method");
+
+    modifier ownerGovernmentOrAdmin(){      
+      EntitiesInterface contractEntities = EntitiesInterface(entitySC);    
+      require((msg.sender==owner) || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government)
+      || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin),"Owner, Governments or Admins can execute this method");
       _;
     }
 
-    function setFatherAddress(address fAddress) public mustBeGovernment {        
-        tokenFather = fAddress;
-        dateLastUpdate = block.timestamp;
-        emit governmentTransactions(msg.sender,dateCreation);
+    function setFatherAddress(address fAddress) public mustBeGovernmentOrAdmin(entitySC){
+      require(EntitiesInterface(entitySC).entityExists(fAddress),"Father is not registered");
+      require(EntitiesInterface(entitySC).getType(fAddress) == EntitiesInterface.EntityType.Individual,"Father must be an individual");
+      tokenFather = fAddress;
+      dateLastUpdate = block.timestamp;
+      emit governmentTransactions(msg.sender, dateLastUpdate);
     }
 
-    function setMotherAddress(address mAddress) public mustBeGovernment {        
+    function setMotherAddress(address mAddress) public mustBeGovernmentOrAdmin(entitySC) {        
+        require(EntitiesInterface(entitySC).entityExists(mAddress),"Mother is not registered");
+        require(EntitiesInterface(entitySC).getType(mAddress) == EntitiesInterface.EntityType.Individual,"Mother must be an individual");
         tokenMother = mAddress;
         dateLastUpdate = block.timestamp;
-        emit governmentTransactions(msg.sender,dateCreation);
+        emit governmentTransactions(msg.sender, dateLastUpdate);
     }
 
-    function getName() public view  ownerOrGovernment returns (string memory){
+    function setNewName(string memory newName) public mustBeGovernmentOrAdmin(entitySC){
+      fullName.name = newName;
+      dateLastUpdate = block.timestamp;
+      emit governmentTransactions(msg.sender,dateLastUpdate);
+    }
+
+    function getName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.name;
     }
 
-    function getFatherLastName() public view  ownerOrGovernment returns (string memory){
+    function getFatherLastName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.fLastName;
     }
 
-    function getMotherLastName() public view  ownerOrGovernment returns (string memory){
+    function getMotherLastName() public view  ownerGovernmentOrAdmin returns (string memory){
       return fullName.mLastName;
     }
 
-    function getFullName() public view  ownerOrGovernment returns (string memory){
+    function getFullName() public view  ownerGovernmentOrAdmin returns (string memory){
       return string.concat(fullName.name," ",fullName.fLastName," ",fullName.mLastName);
     }
 
 
-    function isMale() public view ownerOrGovernment returns (bool){
+    function isMale() public view ownerGovernmentOrAdmin returns (bool){
       return genderM;
     }
 
 
-    function getBirthDay() public view ownerOrGovernment returns (uint){
+    function getBirthDay() public view ownerGovernmentOrAdmin returns (uint){
       return birthday;
     }
 
-    function getLocality() public view ownerOrGovernment returns (uint16){
+    function getLocality() public view ownerGovernmentOrAdmin returns (uint16){
       return locality;
     }
 
-    function getMunicipalty() public view ownerOrGovernment returns (uint16){
+    function getMunicipalty() public view ownerGovernmentOrAdmin returns (uint16){
       return municipalty;
     }
 
-    function getState() public view ownerOrGovernment returns (uint16){
+    function getState() public view ownerGovernmentOrAdmin returns (uint16){
       return state;
     }
 
-    function getCountry() public view ownerOrGovernment returns (uint16){
+    function getCountry() public view ownerGovernmentOrAdmin returns (uint16){
       return country;
     }
     
-    function getCURP() public view ownerOrGovernment returns (string memory){
+    function getCURP() public view ownerGovernmentOrAdmin returns (string memory){
       return curp;
     }
 
