@@ -21,9 +21,10 @@ contract GralEHR is OwnerInterface{
         address ehr; // address of the EHR contract
         address birthCerSC; // address of the BirthCertificate contract
         address healthCP; // address of the healthcare professional
+        bool exists; //to know if this register extists
     }
     //We set the curp and it returns the digitalId and birthCer addresses.        
-    mapping(string => GralEHR_Match) private curpMatches;
+    mapping(address => GralEHR_Match) private birthCerMatches;
     
 
     modifier onlyActiveGovernmentOrAdmin(address _entitySC){
@@ -59,44 +60,40 @@ contract GralEHR is OwnerInterface{
      * @notice This function creates individual Electronic Health Records (EHR) for entities
      * @dev Requires birth certificates and curps of the entity
      * @param _birthCerSC Birth certificate address
-     * @param _curp The CURP of the entity
      * @param _idDegree The identifier of the healthcare professional
      */
 
-    function createEHR(address _birthCerSC, string memory _curp, string memory _idDegree) 
+    function createEHR(address _birthCerSC, string memory _idDegree) 
      public mustBeActiveHealthCP(_idDegree) {
-
-      //VERIFICAR QUE DIGITALIDENTITY YA TENGA LINKEADO AL BIRTHCERTIFICATE
-      //ADEMAS GITIALIDENTITY DEBE VERIFICAR QUE NO TIENE AGREGADO DOS BIRTHCERTIFICATE AL MISMO TIEMPO
       BirthCertificate bc = BirthCertificate(_birthCerSC);
       address digitalId = bc.digitalIdentity();
       DigitalIdentity digitalIdSC = DigitalIdentity(digitalId);
+      //It verifies that DigitalIdentity has already linked the BirthCertificate
       require(digitalIdSC.isLinked(_birthCerSC),"BirthCertificate address must be linked in Digital Identity");
-      require(digitalId!= address(0), "Incorrect digital identity address or birthcertificate address");
-      require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
-      require(curpMatches[_curp].birthCerSC==address(0),"Curp already exists");
+      require(digitalId!= address(0), "Incorrect digital identity address or birthcertificate address");      
+      require(!birthCerMatches[_birthCerSC].exists,"BirthCertificate already exists");
       
-      EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicsDegree);
-      curpMatches[_curp] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender);
+      EHR ehrAdd = new EHR(address(this),_birthCerSC,msg.sender,academicsDegree);
+      birthCerMatches[_birthCerSC] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender,true);
     }
 
-    modifier OwnerGovernmentAdminOrHealthCP(string memory _curp){      
+    modifier OwnerGovernmentAdminOrHealthCP(address _birthCerSC){      
       EntitiesInterface contractEntities = EntitiesInterface(entitySC);      
-      BirthCertificate bC = BirthCertificate(curpMatches[_curp].birthCerSC);
+      BirthCertificate bC = BirthCertificate(birthCerMatches[_birthCerSC].birthCerSC);
       require((msg.sender==bC.owner()) 
             || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Government)
             || (contractEntities.getType(msg.sender)==EntitiesInterface.EntityType.Admin)
-            || (curpMatches[_curp].healthCP==msg.sender),//professional healtcare
+            || (birthCerMatches[_birthCerSC].healthCP==msg.sender),//professional healtcare
             "Owner, Governments, Admins or HealthCP can execute this method");
       _;
     }
 
-    function getEHR_SC(string memory curp) public view OwnerGovernmentAdminOrHealthCP(curp) returns (address) {
-      return curpMatches[curp].ehr; //if it does not exist returns address(0)
+    function getEHR_SC(address _birthCerSC) public view OwnerGovernmentAdminOrHealthCP(_birthCerSC) returns (address) {
+      return birthCerMatches[_birthCerSC].ehr; //if it does not exist returns address(0)
     }
 
-    function getWhoCreatedEHR(string memory curp) public view OwnerGovernmentAdminOrHealthCP(curp) returns (address) {
-      return curpMatches[curp].healthCP; //if it does not exist returns address(0)
+    function getWhoCreatedEHR(address _birthCerSC) public view OwnerGovernmentAdminOrHealthCP(_birthCerSC) returns (address) {
+      return birthCerMatches[_birthCerSC].healthCP; //if it does not exist returns address(0)
     }
 
 }

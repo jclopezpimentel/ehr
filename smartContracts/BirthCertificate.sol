@@ -149,7 +149,7 @@ contract BirthCertificate is OwnerInterface{  //This is a birth certificate cont
       return curp;
     }
 
-    function verifyCURP(string memory _curp) public  view  returns  (bool){
+    /*function verifyCURP(string memory _curp) public  view  returns  (bool){
       return (keccak256(bytes(curp)) == keccak256(bytes(_curp)));
-    }
+    }*/
 }

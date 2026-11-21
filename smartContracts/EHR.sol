@@ -15,7 +15,6 @@ contract EHR is OwnerInterface{
     address public government; 
     address public healthCP;//healthcare professional who created the EHR
     address private entitySC;
-   string private curp;
    address private birthCerAdd;
    address private academicDeg;
 
@@ -60,15 +59,12 @@ contract EHR is OwnerInterface{
 
 
 
-  constructor(string memory _curp, address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeActiveHealthCP(_healthCP,_academicDeg){    
+  constructor(address _gralEHR, address _birthCerAdd, address _healthCP,address _academicDeg) mustBeActiveHealthCP(_healthCP,_academicDeg){    
     //This line is checking if the contract is called by other contract.
     require(msg.sender.code.length > 0,"It was not called by a contract");
     //This line is collating if the sender is the same that _gralEHR, which eventually must be the contract caller
     require(msg.sender==_gralEHR,"Error: incorrect sender");
     BirthCertificate bc = BirthCertificate(_birthCerAdd);
-
-    // This function is callating if curp belongs to the birth certificate owner
-    require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
     entitySC = bc.entitySC();
     EntitiesInterface contractEntities = EntitiesInterface(entitySC);
     address goverP = contractEntities.getCreator(_healthCP);
@@ -79,7 +75,6 @@ contract EHR is OwnerInterface{
     birthCerAdd = _birthCerAdd;
     owner = bc.owner();    
     healthCP = _healthCP;
-    curp = _curp;
     dateCreation = block.timestamp;
     dateLastUpdate = dateCreation;       
     emit healthCPTransactions(msg.sender,dateCreation);
