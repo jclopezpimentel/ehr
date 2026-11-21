@@ -65,11 +65,17 @@ contract GralEHR is OwnerInterface{
 
     function createEHR(address _birthCerSC, string memory _curp, string memory _idDegree) 
      public mustBeActiveHealthCP(_idDegree) {
+
+      //VERIFICAR QUE DIGITALIDENTITY YA TENGA LINKEADO AL BIRTHCERTIFICATE
+      //ADEMAS GITIALIDENTITY DEBE VERIFICAR QUE NO TIENE AGREGADO DOS BIRTHCERTIFICATE AL MISMO TIEMPO
       BirthCertificate bc = BirthCertificate(_birthCerSC);
       address digitalId = bc.digitalIdentity();
+      DigitalIdentity digitalIdSC = DigitalIdentity(digitalId);
+      require(digitalIdSC.isLinked(_birthCerSC),"BirthCertificate address must be linked in Digital Identity");
       require(digitalId!= address(0), "Incorrect digital identity address or birthcertificate address");
       require(bc.verifyCURP(_curp),"CURP does not corresponds to BirthCertificate");
       require(curpMatches[_curp].birthCerSC==address(0),"Curp already exists");
+      
       EHR ehrAdd = new EHR(_curp,address(this),_birthCerSC,msg.sender,academicsDegree);
       curpMatches[_curp] = GralEHR_Match(address(ehrAdd),_birthCerSC, msg.sender);
     }
