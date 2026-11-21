@@ -5,7 +5,7 @@ pragma solidity 0.8.23;
 import "./BirthCertificate.sol";
 import "./EntitiesInterface.sol";
 
-
+//This smart contract stores degrees (diplomas)
 contract AcademicsDegree is OwnerInterface{  
   //This contract stores academic credentials and the validation of professional qualifications
   enum Degree{Undergraduate, Postgraduate, Master, Doctorate}
