@@ -29,7 +29,7 @@ contract DigitalIdentity is OwnerInterface{
                 address creator; //Address creator of the token, usually could be the government
                 bool gcert; //true if the linked token is really a verified government
                             //false if not
-                bool exists; // Boolean flag to track whether a entity exists 
+                bool exists; // Boolean flag to track whether a contract address has been added
         }
         
         mapping(address => LinkedContract) private linkedContracts;
@@ -113,4 +113,9 @@ contract DigitalIdentity is OwnerInterface{
         LinkedContract memory lToken = linkedContracts[_contractAdd];
         return (lToken.creator);
     }
+ 
+     function isLinked(address _contractAdd) public view returns (bool) {
+        return (linkedContracts[_contractAdd].exists);
+    }
+
  }
