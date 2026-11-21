@@ -60,7 +60,10 @@ contract AcademicsDegree is OwnerInterface{
     function addDiploma(string memory idDegree, string memory title, uint date, Degree degree, TypeDegree typeDegree, string memory details, address _BirthCertificate, address _owner) 
      public onlyActiveGovernmentOrAdmin(entitySC) {
       BirthCertificate birthCer = BirthCertificate(_BirthCertificate); 
-      require(birthCer.owner()==_owner,"Invalid birthcertificate addresss or owner address");
+      require(birthCer.owner()==_owner,"Invalid birthcertificate addresss or owner address");      
+      DigitalIdentity digitalIdSC = DigitalIdentity(birthCer.digitalIdentity());
+      //It verifies that DigitalIdentity has already linked the BirthCertificate
+      require(digitalIdSC.isLinked(_BirthCertificate),"BirthCertificate address must be linked in Digital Identity");
       require(!diploma[idDegree].exists, "idDegree already exists");      
       diploma[idDegree] = Diploma(idDegree,_owner,_BirthCertificate,title,date,degree,typeDegree,details,true,true,block.timestamp);
       diplomasByOwner[_owner].push(idDegree);
